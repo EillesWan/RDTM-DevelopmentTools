@@ -32,15 +32,24 @@ def unzip(zipFile, targetDirection):
 
 import sys
 
-file = sys.argv[1]
 
-unzip(sys.argv[2],'./temp/')
+try:
+    file = sys.argv[1]
+
+    unzip(sys.argv[2],'./temp/')
+except IndexError:
+    file =''
+    zipf = ''
+    print("先excel再zip")
+    while not (os.path.exists(file) and os.path.exists(zipf)):
+        file,zipf = input().split(' ')
+
 
 # 导入xlwings模块
 import xlwings as xw
 
-# 打开Excel程序，默认设置：程序可见，只打开不新建工作薄
-app=xw.App(visible=True,add_book=False)
+# 打开Excel程序，默认设置：程序不可见，只打开不新建工作薄
+app=xw.App(visible=False,add_book=False)
 app.display_alerts=False
 
 # 文件位置：filepath，打开test文档，然后保存，关闭，结束程序
@@ -63,18 +72,18 @@ for line in lines:
         
         # 信息读入
 
-        author = line[3]
+        author = line[3].replace('\n','')
         isMember = '【外】' if line[4] == '不是' else ''
-        authorQQ = '' if isMember == '' else line[6] 
-        projectName = line[7]
-        projectType = line[8]
-        projectCost = line[9]
+        authorQQ = '' if isMember == '' else line[6].replace('\n','')
+        projectName = line[7].replace('\n','')
+        projectType = line[8].replace('\n','')
+        projectCost = line[9].replace('\n','')
         skinType = '粗手臂' if line[10] == 'Steve  （粗手臂）' else '细手臂'
         skin = line[11:17]
-        projectDescription = line[17]
+        projectDescription = line[17].replace('\n','')
         projectPicture = line[18:24]
         projectCopyleftPic = line[24:]
-        projectCopyleftDescription = line[2]
+        projectCopyleftDescription = line[2].replace('\n','')
 
         # 信息处理
 
@@ -86,24 +95,34 @@ for line in lines:
 
         for i in skin:
             if i:
-                n = i.replace(':','_').replace('/','-')
-                shutil.move(f'./temp/{n}',projectDirection)
-                os.rename(f'{projectDirection}{n}',f'{projectDirection}{n}'.replace(n[:n.index('.')],f'展开图{skin.index(i)}'))
-        
+                n = i.replace(':','-').replace('/','-')
+                try:
+                    shutil.move(f'./temp/{n}',projectDirection)
+                    os.rename(f'{projectDirection}{n}',f'{projectDirection}{n}'.replace(n[:n.index('.')],f'展开图{skin.index(i)}'))
+                except Exception as E:
+                    print(f'文件\"{projectDirection}\"操作时发送错误\n{E}')
+
         for i in projectPicture:
             if i:
-                n = i.replace(':','_').replace('/','-')
-                shutil.move(f'./temp/{n}',projectDirection)
-                os.rename(f'{projectDirection}{n}',f'{projectDirection}{n}'.replace(n[:n.index('.')],f'展示图Show{projectPicture.index(i)}'))
+                n = i.replace(':','-').replace('/','-')
+                try:
+                    shutil.move(f'./temp/{n}',projectDirection)
+                    os.rename(f'{projectDirection}{n}',f'{projectDirection}{n}'.replace(n[:n.index('.')],f'展示图Show{projectPicture.index(i)}'))
+                except Exception as E:
+                    print(f'文件\"{projectDirection}\"操作时发送错误\n{E}')
 
         
         if projectCopyleftDescription != '未借鉴他人，皮肤是我自己的创新，完全是我做的':
             os.makedirs(f'{projectDirection}借鉴参考/')
+            open(f'{projectDirection}借鉴参考/借鉴解释.txt','w').write(projectCopyleftDescription)
             for i in projectCopyleftPic:
                 if i:
-                    n = i.replace(':','_').replace('/','-')
-                    shutil.move(f'./temp/{n}',f'{projectDirection}借鉴参考/')
-                    os.rename(f'{projectDirection}借鉴参考/{n}',f'{projectDirection}借鉴参考/{n}'.replace(n[:n.index('.')],f'参考图{projectCopyleftPic.index(i)}'))
+                    n = i.replace(':','-').replace('/','-')
+                    try:
+                        shutil.move(f'./temp/{n}',f'{projectDirection}借鉴参考/')
+                        os.rename(f'{projectDirection}借鉴参考/{n}',f'{projectDirection}借鉴参考/{n}'.replace(n[:n.index('.')],f'参考图{projectCopyleftPic.index(i)}'))
+                    except Exception as E:
+                        print(f'文件\"{projectDirection}\"操作时发送错误\n{E}')
 
     else:
         break
