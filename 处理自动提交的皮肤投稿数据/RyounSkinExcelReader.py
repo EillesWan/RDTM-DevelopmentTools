@@ -73,8 +73,8 @@ for line in lines:
         # 信息读入
 
         author = line[3].replace('\n','')
-        isMember = '【外】' if line[4] == '不是' else ''
-        authorQQ = '' if isMember == '' else line[6].replace('\n','')
+        isMember = '【外】' if line[4] == '以上皆非' else '【星河】' if '星河' in line[4] else '【ICW】' if 'ICW' in line[4] else ''
+        authorQQ = '作者QQ '+str(line[6]).replace('\n','')
         projectName = line[7].replace('\n','')
         projectType = line[8].replace('\n','')
         projectCost = line[9].replace('\n','')
