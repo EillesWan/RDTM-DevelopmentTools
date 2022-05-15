@@ -58,9 +58,8 @@ book=app.books.open(file)
 
 
 
-i = 1
 
-lines = book.sheets(i).range('A1:AE10').value
+lines = book.sheets(1).range('A1:AG15').value
 
 open('result.txt','w',encoding='utf-8')
 
@@ -68,22 +67,24 @@ for line in lines:
     if lines.index(line) == 0:
         continue
     if line[0]:
-        open('result.txt','a',encoding='utf-8').write(str(tuple(enumerate(line)))+'\n\n')
+        # open('result.txt','a',encoding='utf-8').write(str(tuple(enumerate(line)))+'\n\n')
         
         # 信息读入
 
-        author = line[3].replace('\n','')
-        isMember = '【外】' if line[4] == '以上皆非' else '【星河】' if '星河' in line[4] else '【ICW】' if 'ICW' in line[4] else ''
-        authorQQ = '作者QQ '+str(line[6]).replace('\n','')
-        projectName = line[7].replace('\n','')
-        projectType = line[8].replace('\n','')
-        projectCost = line[9].replace('\n','')
+        author = line[3].replace('\n',' ')
+        isMember = '【外】' if line[4] == '以上皆非' else ('【星河】' if '星河' in line[4] else ('【ICW】' if 'ICW' in line[4] else ('【工作室】' if '工作室' in line[4] else '')))
+        authorQQ = '作者QQ '+str(line[6])
+        projectName = line[7].replace('\n',' ')
+        projectType = line[8].replace('\n',' ')
+        projectCost = line[9].replace('\n',' ')
         skinType = '粗手臂' if line[10] == 'Steve  （粗手臂）' else '细手臂'
         skin = line[11:17]
-        projectDescription = line[17].replace('\n','')
+        projectDescription = line[17].replace('\n',' ')
         projectPicture = line[18:24]
-        projectCopyleftPic = line[24:]
-        projectCopyleftDescription = line[2].replace('\n','')
+        projectCopyleftPic = line[24:30] # 值得注意的是，第30号格子是一个空格，是已经删掉的
+        projectCopyleftDescription = line[2].replace('\n',' ')
+        releasePlatform = '仅网易' if line[31] == '仅发布网易' else ('允许其他平台' if line[31] == '可以发布其他平台' else '【注】')
+        releaseAuthor = line[32] if line[32] != '无需作答' else '金羿'
 
         # 信息处理
 
@@ -91,7 +92,9 @@ for line in lines:
         
         os.makedirs(projectDirection)
 
-        open(f'{projectDirection}{projectType} {skinType} {projectCost}.txt','w').write(f'{projectDescription}\n\n\n{authorQQ}')
+        open(f'{projectDirection}{releasePlatform} {releaseAuthor}.release.txt','w').write(f'{line[31]}')
+
+        open(f'{projectDirection}{projectType} {skinType} {projectCost}.description.txt','w').write(f'{projectDescription}\n\n\n{authorQQ}')
 
         for i in skin:
             if i:
