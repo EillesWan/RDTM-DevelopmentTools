@@ -54,14 +54,14 @@ app.display_alerts=False
 
 # 文件位置：filepath，打开test文档，然后保存，关闭，结束程序
 
-book=app.books.open(file)
+book=app.books.open(file,read_only=True)
 
 
 
 
 lines = book.sheets(1).range('A1:AG15').value
 
-open('result.txt','w',encoding='utf-8')
+# open('result.txt','w',encoding='utf-8')
 
 for line in lines:
     if lines.index(line) == 0:
@@ -84,7 +84,7 @@ for line in lines:
         projectCopyleftPic = line[24:30] # 值得注意的是，第30号格子是一个空格，是已经删掉的
         projectCopyleftDescription = line[2].replace('\n',' ')
         releasePlatform = '仅网易' if line[31] == '仅发布网易' else ('允许其他平台' if line[31] == '可以发布其他平台' else '【注】')
-        releaseAuthor = line[32] if line[32] != '无需作答' else '金羿'
+        releaseAuthor = line[32] if ( line[32] != '无需作答' and line[32] ) else '金羿'
 
         # 信息处理
 
@@ -92,9 +92,9 @@ for line in lines:
         
         os.makedirs(projectDirection)
 
-        open(f'{projectDirection}{releasePlatform} {releaseAuthor}.release.txt','w').write(f'{line[31]}')
+        open(f'{projectDirection}{releasePlatform} {releaseAuthor}.release.txt','w',encoding='utf-8').write(f'{line[31]}')
 
-        open(f'{projectDirection}{projectType} {skinType} {projectCost}.description.txt','w').write(f'{projectDescription}\n\n\n{authorQQ}')
+        open(f'{projectDirection}{projectType} {skinType} {projectCost}.description.txt','w',encoding='utf-8').write(f'{projectDescription}\n\n\n{authorQQ}')
 
         for i in skin:
             if i:
@@ -117,7 +117,7 @@ for line in lines:
         
         if projectCopyleftDescription != '未借鉴他人，皮肤是我自己的创新，完全是我做的':
             os.makedirs(f'{projectDirection}借鉴参考/')
-            open(f'{projectDirection}借鉴参考/借鉴解释.txt','w').write(projectCopyleftDescription)
+            open(f'{projectDirection}借鉴参考/借鉴解释.txt','w',encoding='utf-8').write(projectCopyleftDescription)
             for i in projectCopyleftPic:
                 if i:
                     n = i.replace(':','-').replace('/','-')
