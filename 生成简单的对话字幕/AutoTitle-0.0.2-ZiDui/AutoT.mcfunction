@@ -1,0 +1,10 @@
+/execute @a ~ ~ ~ /execute @s[scores={r=1}] ~ ~ ~ /title @s title o
+/execute @a ~ ~ ~ /execute @s[scores={r=2}] ~ ~ ~ /title @s title op
+/execute @a ~ ~ ~ /execute @s[scores={r=3}] ~ ~ ~ /title @s title opi
+/execute @a ~ ~ ~ /execute @s[scores={r=4}] ~ ~ ~ /title @s title opiu
+/execute @a ~ ~ ~ /execute @s[scores={r=5}] ~ ~ ~ /title @s title opiuj
+/execute @a ~ ~ ~ /execute @s[scores={r=6}] ~ ~ ~ /title @s title opiujh
+/execute @a ~ ~ ~ /execute @s[scores={r=7}] ~ ~ ~ /title @s title opiujhn
+/execute @a ~ ~ ~ /execute @s[scores={r=8}] ~ ~ ~ /title @s title opiujhnb
+/execute @a ~ ~ ~ /execute @s[scores={r=4}] ~ ~ ~ /title @s subtitle s
+/execute @a ~ ~ ~ /execute @s[scores={r=8}] ~ ~ ~ /title @s subtitle sd
