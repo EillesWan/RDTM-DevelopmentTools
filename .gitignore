@@ -3,6 +3,9 @@
 处理自动提交的皮肤投稿数据/*.zip
 处理自动提交的皮肤投稿数据/*.xlsx
 处理自动提交的皮肤投稿数据/result.txt
+处理自动提交的皮肤投稿数据/temp/
+处理自动提交的皮肤投稿数据/result
+处理自动提交的皮肤投稿数据/新建文本文档.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
