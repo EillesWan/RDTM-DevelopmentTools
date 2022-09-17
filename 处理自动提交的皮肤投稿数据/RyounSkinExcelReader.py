@@ -57,7 +57,7 @@ app.display_alerts = False
 book = app.books.open(file, read_only=True)
 
 
-lines = book.sheets(1).range('A1:AG20').value
+lines = book.sheets(1).range('A1:AG50').value
 
 # open('result.txt','w',encoding='utf-8')
 
@@ -86,7 +86,7 @@ for line in lines:
         authorQQ = '作者QQ ' + str(line[6])
         projectName = line[7].replace('\n', ' ')
         projectType = line[8].replace('\n', ' ')
-        projectCost = line[9].replace('\n', ' ')
+        projectCost = line[9].replace('\n', ' ').replace('*','')
         skinType = '粗手臂' if line[10] == 'Steve  （粗手臂）' else '细手臂'
         skin = line[11:17]
         projectDescription = line[17].replace('\n', ' ')
