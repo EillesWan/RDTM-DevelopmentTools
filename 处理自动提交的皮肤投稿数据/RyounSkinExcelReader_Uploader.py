@@ -112,7 +112,12 @@ getHeader = {
 }
 
 # 统计数据定义
-allProjrcts = []
+allProjrcts = {
+    "成功": [],
+    "失败": [],
+    "错误": [],
+    "未知": [],
+}
 maxProjectNameLength = 0
 maxAuthorNameLength = 0
 
@@ -126,7 +131,7 @@ for line in lines:
         # 信息读入
 
         author = line[3].replace("\n", " ")
-        isMember = (
+        isMember_ = (
             "【非本团队成员】"
             if line[4] == "以上皆非"
             else (
@@ -139,12 +144,65 @@ for line in lines:
                 )
             )
         )
+        isMember = (
+            '【外】'
+            if line[4] == '以上皆非'
+            else (
+                '【星河】'
+                if '星河' in line[4]
+                else (
+                    '【ICW】'
+                    if 'ICW' in line[4]
+                    else ('【工作室】' if '工作室' in line[4] else '')
+                )
+            )
+        )
         authorQQ = "作者QQ " + str(line[6])
         projectName = line[7].replace("\n", " ")
         projectType = line[8].replace("\n", " ")
+
+        # 资源定价所需要的资源类型 免费free|绿宝石point|钻石diamond|礼包gift
         projectCost = line[9].replace("\n", " ").replace("*", "")
+
+        CostErr = False
+
+        if "免费" in projectCost:
+            cost_ = ("free", 0)
+        elif "绿宝石" in projectCost:
+            costNum_ = ""
+            for i in projectCost:
+                try:
+                    int(i)
+                    costNum_ += i
+                except:
+                    pass
+            if costNum_ == "":
+                costNum_ = random.randint(2,9)*10
+            elif not costNum_ in projectCost:
+                CostErr = True
+            cost_ = ("point", int(costNum_))
+        elif "钻石" in projectCost:
+            costNum_ = ""
+            for i in projectCost:
+                try:
+                    int(i)
+                    costNum_ += i
+                except:
+                    pass
+            if not costNum_ in projectCost:
+                CostErr = True
+            cost_ = ("diamond", int(costNum_))
+        else:
+            cost_ = ("free", "0")
+            CostErr = True
+
+        # 皮肤类型
+        skinType_ = '粗手臂' if line[10] == 'Steve  （粗手臂）' else '细手臂'
         skinType = "normal" if line[10] == "Steve  （粗手臂）" else "slim"
+
+        # 皮肤地址
         skin = line[11:17]
+
         projectDescription = line[17].replace("\n", " ")
         projectPicture = line[18:24]
         projectCopyleftPic = line[24:30]  # 值得注意的是，第30号格子是一个空格，是已经删掉的
@@ -168,7 +226,7 @@ for line in lines:
         ).write(f"{line[31]}")
 
         open(
-            f"{projectDirection}{projectType} {skinType} {projectCost}.description.txt",
+            f"{projectDirection}{projectType} {skinType_} {projectCost}.description.txt",
             "w",
             encoding="utf-8",
         ).write(f"{projectDescription}\n\n\n{authorQQ}")
@@ -303,9 +361,9 @@ Content-Type: image/png
         print("成功通告服务端")
 
         print("====================开始投稿资源：提交资源信息")
-        isMember = (
-            f'<strong style="color: green;" class="ql-size-small">{isMember}</strong>'
-            if isMember
+        isMember_ = (
+            f'<strong style="color: green;" class="ql-size-small">{isMember_}</strong>'
+            if isMember_
             else ""
         )
         datadict = {
@@ -322,7 +380,7 @@ Content-Type: image/png
             ),  # 上传组件子类型 地图-闯关1 RPG2 PVP3 建筑4 其他5 | 模组-玩法6 道具7 生物8 其他9 一键生成10 | 材质光影-材质11 光影12 | 皮肤-原版13 科幻14 神话15 其他16 | 联机大厅- 未考证
             "pc_pri_type": None,
             "pc_sub_type": None,
-            "info": f'<p><img src="https://x19.fp.ps.netease.com/file/627020d4442e29577c303660uydAI6HY04"></p><p><span class="ql-size-large">本组件作者：</span><strong class="ql-size-huge" style="color: blue;">{author}</strong>{isMember}</p><p>{projectDescription}</p><p class="ql-align-center"><strong style="color: blue;" class="ql-size-huge">凌天之云创新我的世界开发团队</strong></p><p class="ql-align-center"><span style="color: blue;" class="ql-size-huge">Ryoun Development Team for Minecraft</span></p><p class="ql-align-center"><strong style="color: orange;" class="ql-size-huge">玩家至上</strong></p><p><span class="ql-size-large">代发各种优秀稿件！皮肤、组件、地图、材质、光影皆可！</span></p><p><em class="ql-size-large">欢迎前来探讨您在游玩时遇到的问题以及提供信息反馈：</em><strong class="ql-size-huge"><em>946419613</em></strong></p>',  # 详情简介
+            "info": f'<p><img src="https://x19.fp.ps.netease.com/file/627020d4442e29577c303660uydAI6HY04"></p><p><span class="ql-size-large">本组件作者：</span><strong class="ql-size-huge" style="color: blue;">{author}</strong>{isMember_}</p><p>{projectDescription}</p><p class="ql-align-center"><strong style="color: blue;" class="ql-size-huge">凌天之云创新我的世界开发团队</strong></p><p class="ql-align-center"><span style="color: blue;" class="ql-size-huge">Ryoun Development Team for Minecraft</span></p><p class="ql-align-center"><strong style="color: orange;" class="ql-size-huge">玩家至上</strong></p><p><span class="ql-size-large">代发各种优秀稿件！皮肤、组件、地图、材质、光影皆可！</span></p><p><em class="ql-size-large">欢迎前来探讨您在游玩时遇到的问题以及提供信息反馈：</em><strong class="ql-size-huge"><em>946419613</em></strong></p>',  # 详情简介
             "pc_info": "",
             "rarity": 0,
             "lobby_min_num": 0,
@@ -337,9 +395,9 @@ Content-Type: image/png
             "mod_id": 0,
             "available_scope": "",
             "force_encrypt": False,
-            "price_type": "free",  # 资源定价所需要的资源类型 免费free|绿宝石point| ?
+            "price_type": cost_[0],  # 资源定价所需要的资源类型 免费free|绿宝石point|钻石diamond|礼包gift
             "trial_duration": 0,
-            "price": 0,  # 价格
+            "price": cost_[1],  # 价格
             "ios_price": 0,
             "ios_price_type": "",
             "ios_jelly_id": "",
@@ -485,18 +543,22 @@ Content-Type: image/png
         maxAuthorNameLength = max(len(author), maxAuthorNameLength)
         maxProjectNameLength = max(len(projectName), maxProjectNameLength)
 
-        allProjrcts.append(
+        status = (
+            "失败"
+            if result["status"] == "fail"
+            else (
+                "成功"
+                if result["status"] == "ok"
+                else ("错误" if result["status"] == "params error" else "未知")
+            )
+        )
+        allProjrcts[status].append(
             {
                 "name": projectName,
                 "author": author,
-                "status": "失败"
-                if result["status"] == "fail"
-                else (
-                    "成功"
-                    if result["status"] == "ok"
-                    else ("错误" if result["status"] == "params error" else "未知")
-                ),
+                "status": status,
                 "msg": result,
+                "DEAL": CostErr,
             }
         )
 
@@ -522,15 +584,13 @@ print(
     "信息",
 )
 
-# =================================BUG TO BE FIXED
 
-
-allProjrctsInType = {}
-
-for context in allProjrcts:
-    try:
-        allProjrctsInType[str(context["status"])].append(
-            str(context["name"])
+for key, subj in allProjrcts.items():
+    print(f"{key}x{len(subj)}")
+    for context in subj:
+        print(
+            ("■" if context["DEAL"] else '')
+            + str(context["name"])
             + "\t" * int((maxProjectNameLength - len(context["name"])) / 4)
             + "|"
             + str(context["author"])
@@ -540,22 +600,10 @@ for context in allProjrcts:
             + "|"
             + str(context["msg"])
         )
-    except:
-        allProjrctsInType[str(context["status"])] = [
-            str(context["name"])
-            + "\t" * int((maxProjectNameLength - len(context["name"])) / 4)
-            + "|"
-            + str(context["author"])
-            + "\t" * int((maxAuthorNameLength - len(context["author"])) / 4)
-            + "|"
-            + str(context["status"])
-            + "|"
-            + str(context["msg"]),
-        ]
+        if context["DEAL"]:
+            print(f"定价：{projectCost} ;解析结果：{cost_}")
+    print()
 
-
-for i, j in allProjrctsInType:
-    print(j)
 
 shutil.rmtree("./temp/")
 
