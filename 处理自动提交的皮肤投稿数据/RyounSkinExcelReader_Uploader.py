@@ -217,7 +217,13 @@ for line in lines:
         # 信息处理
 
         projectDirection = f"./result/{projectName}（{author}{isMember}）/"
-        os.makedirs(projectDirection)
+
+        try:
+            os.makedirs(projectDirection)
+        except FileExistsError:
+            print(f"\n\n目录已存在 {projectDirection} 此组件(之一)已被跳过\n\n")
+        except Exception as E:
+            print(f"\n\n创建目录时发生未知错误 {E} 此组件已被跳过\n\n")
 
         open(
             f"{projectDirection}{releasePlatform} {releaseAuthor}.release.txt",
@@ -540,6 +546,9 @@ Content-Type: image/png
         )
         print()
 
+        if result["status"] == "ok":
+            open("saveDataBase.txt",'a',encoding='utf-8').write(f'{result["data"]["item_id"]} {projectName} {author} {isMember} 皮肤 {projectType} {cost_[0]} {cost_[1]} {projectDescription} {projectCopyleftDescription} {responseData}\n\n')
+
         maxAuthorNameLength = max(len(author), maxAuthorNameLength)
         maxProjectNameLength = max(len(projectName), maxProjectNameLength)
 
@@ -558,7 +567,7 @@ Content-Type: image/png
                 "author": author,
                 "status": status,
                 "msg": result,
-                "DEAL": CostErr,
+                "DEAL": (projectCost, cost_) if CostErr else False,
             }
         )
 
@@ -601,7 +610,7 @@ for key, subj in allProjrcts.items():
             + str(context["msg"])
         )
         if context["DEAL"]:
-            print(f"定价：{projectCost} ;解析结果：{cost_}")
+            print(f"■﹂定价：{context['DEAL'][0]} ;解析结果：{context['DEAL'][1]}")
     print()
 
 
