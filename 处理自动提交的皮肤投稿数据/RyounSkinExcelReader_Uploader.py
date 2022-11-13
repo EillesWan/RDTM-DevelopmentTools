@@ -26,6 +26,138 @@ import sys
 import zipfile
 import random
 import requests
+from rich.console import Console
+from typing import Any, Optional, TextIO, Literal
+
+JustifyMethod = Literal["default", "left", "center", "right", "full"]
+OverflowMethod = Literal["fold", "crop", "ellipsis", "ignore"]
+
+
+
+MainConsole = Console()
+
+
+
+def prt(
+    *objects: Any,
+    sep: str = " ",
+    end: str = "\n",
+    justify: Optional[JustifyMethod] = None,
+    overflow: Optional[OverflowMethod] = None,
+    no_wrap: Optional[bool] = None,
+    emoji: Optional[bool] = None,
+    markup: Optional[bool] = None,
+    highlight: Optional[bool] = None,
+    width: Optional[int] = None,
+    height: Optional[int] = None,
+    crop: bool = True,
+    soft_wrap: Optional[bool] = None,
+    new_line_start: bool = False,
+) -> None:
+    """打印到控制台。
+
+    Args:
+        objects (位置性的args): 要记录到终端的对象。
+        sep (str, 可选): 要在打印数据之间写入的字符串。默认为""。
+        end (str, optio可选nal): 在打印数据结束时写入的字符串。默认值为"\\\\n"。
+        style (Union[str, Style], 可选): 应用于输出的样式。默认为`None`。
+        justify (str, 可选): 校正位置，可为"default", "left", "right", "center" 或 "full". 默认为`None`。
+        overflow (str, 可选): 控制溢出："ignore"忽略, "crop"裁剪, "fold"折叠, "ellipsis"省略号。默认为`None`。
+        no_wrap (Optional[bool], 可选): 禁用文字包装。默认为`None`。
+        emoji (Optional[bool], 可选): 启用表情符号代码，或使用控制台默认的`None`。默认为`None`。
+        markup (Optional[bool], 可选): 启用标记，或`None`使用控制台默认值。默认为`None`。
+        highlight (Optional[bool], 可选): 启用自动高亮，或`None`使用控制台默认值。默认为`None`。
+        width (Optional[int], 可选): 输出的宽度，或`None`自动检测。默认为`None`。
+        crop (Optional[bool], 可选): 裁剪输出到终端的宽度。默认为`True`。
+        soft_wrap (bool, 可选): 启用软包装模式，禁止文字包装和裁剪，或`None``用于 控制台默认值。默认为`None`。
+        new_line_start (bool, False): 如果输出包含多行，在开始时插入一个新行。默认值为`False`。
+    """
+    MainConsole.print(
+        *objects,
+        sep=sep,
+        end=end,
+        style="#F0F2F4 on #121110",
+        justify=justify,
+        overflow=overflow,
+        no_wrap=no_wrap,
+        emoji=emoji,
+        markup=markup,
+        highlight=highlight,
+        width=width,
+        height=height,
+        crop=crop,
+        soft_wrap=soft_wrap,
+        new_line_start=new_line_start,
+    )
+
+
+
+def ipt(
+    *objects: Any,
+    sep: str = " ",
+    justify: Optional[JustifyMethod] = None,
+    overflow: Optional[OverflowMethod] = None,
+    no_wrap: Optional[bool] = None,
+    emoji: Optional[bool] = None,
+    markup: Optional[bool] = None,
+    highlight: Optional[bool] = None,
+    width: Optional[int] = None,
+    height: Optional[int] = None,
+    crop: bool = True,
+    soft_wrap: Optional[bool] = None,
+    new_line_start: bool = False,
+    password: bool = False,
+    stream: Optional[TextIO] = None,
+) -> str:
+    """显示一个提示并等待用户的输入。
+
+    它的工作方式与Python内建的 :func:`ipt` 函数相同，如果Python内建的 :mod:`readline` 模块先前已经加载，则提供详细的行编辑和历史功能。
+
+    Args:
+        objects (位置性的args): 要记录到终端的对象。
+        sep (str, 可选): 要在打印数据之间写入的字符串。默认为""。
+        end (str, optio可选nal): 在打印数据结束时写入的字符串。默认值为"\\\\n"。
+        style (Union[str, Style], 可选): 应用于输出的样式。默认为`None`。
+        justify (str, 可选): 校正位置，可为"default", "left", "right", "center" 或 "full". 默认为`None`。
+        overflow (str, 可选): 控制溢出："ignore"忽略, "crop"裁剪, "fold"折叠, "ellipsis"省略号。默认为`None`。
+        no_wrap (Optional[bool], 可选): 禁用文字包装。默认为`None`。
+        emoji (Optional[bool], 可选): 启用表情符号代码，或使用控制台默认的`None`。默认为`None`。
+        markup (Optional[bool], 可选): 启用标记，或`None`使用控制台默认值。默认为`None`。
+        highlight (Optional[bool], 可选): 启用自动高亮，或`None`使用控制台默认值。默认为`None`。
+        width (Optional[int], 可选): 输出的宽度，或`None`自动检测。默认为`None`。
+        crop (Optional[bool], 可选): 裁剪输出到终端的宽度。默认为`True`。
+        soft_wrap (bool, 可选): 启用软包装模式，禁止文字包装和裁剪，或`None``用于 控制台默认值。默认为`None`。
+        new_line_start (bool, False): 如果输出包含多行，在开始时插入一个新行。默认值为`False`。
+        password (bool, 可选): 隐藏已经输入的文案，默认值为`False`。
+        stream (TextIO, 可选): 可选从文件中读取（而非控制台），默认为 `None`。
+
+    Returns:
+        str: 从stdin读取的字符串
+    """
+    MainConsole.print(
+        *objects,
+        sep=sep,
+        end="",
+        style="#F0F2F4 on #121110",
+        justify=justify,
+        overflow=overflow,
+        no_wrap=no_wrap,
+        emoji=emoji,
+        markup=markup,
+        highlight=highlight,
+        width=width,
+        height=height,
+        crop=crop,
+        soft_wrap=soft_wrap,
+        new_line_start=new_line_start,
+    )
+
+    return MainConsole.input("", password=password, stream=stream)
+
+
+
+
+
 
 
 def unzip(zipFile, targetDirection):
@@ -42,9 +174,9 @@ try:
 except IndexError:
     file = ""
     zipf = ""
-    print("先excel再zip")
+    prt("先excel再zip")
     while not (os.path.exists(file) and os.path.exists(zipf)):
-        file, zipf = input().split(" ")
+        file, zipf = ipt().split(" ")
     unzip(zipf, "./temp/")
 
 
@@ -64,11 +196,74 @@ lines = book.sheets(1).range("A1:AG50").value
 
 # open('result.txt','w',encoding='utf-8')
 
-cookie = input("Cookie: ")
+cookie = ipt("Cookie: ")
 if os.path.isfile(cookie):
     cookie = open(cookie, "r").read()
 else:
     cookie = cookie
+
+def inputDire(tip:str) -> str:
+    '''输入一个目录'''
+    while True:
+        res = ipt(tip)
+        if os.path.isdir(res):
+            break
+        else:
+            prt(f"|{res}|错误，请重新输入。")
+    return res
+
+
+def getAllFiles(dirPath:str, endn:str = '.blend') -> list:
+    '''获取目录{dirPath}中全部后缀为{endn}的文件列表'''
+    flist = []
+    for root, dirs, fs in os.walk(dirPath):
+        for f in fs:
+            f_fullpath = os.path.join(root, f)
+            if f_fullpath.endswith(endn):
+                flist.append(f_fullpath)
+    return flist
+
+
+def inputModelDir(type:str) -> list:
+    '''让用户输入一个{type}的模板目录，返回其中的所有blend模板'''
+    modelDire = inputDire(f"{type}模板目录：")
+    return getAllFiles(modelDire,'.blend')
+    
+
+
+RenderModelTAlst = inputModelDir("TA")
+RenderModelTBlst = inputModelDir("TB")
+
+prt(f"\n已获取TA模板\n{RenderModelTAlst}\n\n已获取TB模板\n{RenderModelTBlst}\n\n")
+
+
+import time
+
+
+def randerImage(imagePath:str, blendFile: str,finalPath: str = '渲染结果###.png', logFile:str = './RenderLog.log'):
+
+    prt(f"开始渲染文件：{os.path.basename(imagePath)}  录入日志{os.path.abspath(logFile)}")
+    startTime = time.time()
+    
+    
+    renderCMD = f"""blender -b -y --log * --log-file "{logFile}" -d "{blendFile}" --python-expr "import bpy;bpy.ops.image.open(filepath='//{os.path.basename(imagePath)}', directory='"""+os.path.abspath(os.path.dirname(imagePath)).replace('\\','\\\\')+"""', files=["""+"{"+f"""'name':'{os.path.basename(imagePath)}', 'name':'"""+os.path.basename(imagePath)+"'}"+f"""], relative_path=False, show_multiview=False);bpy.data.materials['MaterialA'].node_tree.nodes['图像纹理'].image = bpy.data.images['{os.path.basename(imagePath)}']" -o \""""+os.path.abspath(finalPath).replace('\\','\\\\')+"""\" -f 0"""
+    
+
+    os.system(renderCMD)
+
+    prt(f"渲染已结束 文件{finalPath}已保存 耗时{(int(time.time()-startTime)*100)/100}秒")
+
+    
+
+
+    
+
+
+
+
+
+
+
 
 
 firsturl = "https://mc-launcher.webapp.163.com/items/categories/pe/upload"
@@ -111,6 +306,93 @@ getHeader = {
     "TE": "trailers",
 }
 
+
+
+def uploadPictuare(picturePath):
+
+    prt("====================开始获取图片上传密钥")
+
+    firstResult = requests.get(aGETurl, headers=getHeader).json()
+
+    if firstResult["status"] == "ok":
+        prt("成功！已获取密钥")
+        token = firstResult["data"]["token"]
+    else:
+        prt("获取密钥失败！")
+        prt(firstResult)
+        return False
+
+    prt(f"====================开始上传图片:{os.path.abspath(picturePath)}")
+    aPOSTurl = "https://fp.ps.netease.com/x19/file/new/"
+
+    boundary = "---------------------------" + "".join(
+        [str(random.randint(0, 9)) for i in range(29)]
+    )
+
+    payload = (
+        f"""--{boundary}
+Content-Disposition: form-data; name="Authorization"
+
+{token}
+--{boundary}
+Content-Disposition: form-data; name="fpfile"; filename="{projectName}.png"
+Content-Type: image/png
+
+""".encode()
+        + open(
+            picturePath,
+            "rb",
+        ).read()
+        + f"""
+--{boundary}--""".encode()
+    )
+
+    # prt(f"负载已读取：\n{payload}")
+
+    postHeader = {
+        "Host": "fp.ps.netease.com",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0",
+        "Accept": "*/*",
+        "Accept-Language": "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Content-Type": f"multipart/form-data; boundary={boundary}",
+        "Content-Length": str(len(payload)),
+        "Origin": "https://mcdev.webapp.163.com",
+        "DNT": "1",
+        "Connection": "keep-alive",
+        "Referer": "https://mcdev.webapp.163.com/",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "cross-site",
+        "TE": "trailers",
+    }
+
+    postresult = requests.post(aPOSTurl, data=payload, headers=postHeader)
+
+    
+    prt("图片上传成功")
+
+    return postresult
+
+
+
+def upPic(picPath):
+    '''数据在先 签名在后'''
+    postresult = uploadPictuare(picPath)
+
+    if postresult is False:
+        return False, False
+
+    responseHeader = postresult.headers
+    responseData = postresult.text
+
+    signature = responseHeader["X-Ntes-Signature"]
+
+    return responseData,signature
+
+
+
+
 # 统计数据定义
 allProjrcts = {
     "成功": [],
@@ -129,6 +411,9 @@ for line in lines:
         # open('result.txt','a',encoding='utf-8').write(str(tuple(enumerate(line)))+'\n\n')
 
         # 信息读入
+        prt("正在获取组件信息")
+
+
 
         author = line[3].replace("\n", " ")
         isMember_ = (
@@ -216,14 +501,19 @@ for line in lines:
 
         # 信息处理
 
+
+        prt("正在移动组件资源")
+
+
+
         projectDirection = f"./result/{projectName}（{author}{isMember}）/"
 
         try:
             os.makedirs(projectDirection)
         except FileExistsError:
-            print(f"\n\n目录已存在 {projectDirection} 此组件(之一)已被跳过\n\n")
+            prt(f"\n\n目录已存在 {projectDirection} 此组件(之一)已被跳过\n\n")
         except Exception as E:
-            print(f"\n\n创建目录时发生未知错误 {E} 此组件已被跳过\n\n")
+            prt(f"\n\n创建目录时发生未知错误 {E} 此组件已被跳过\n\n")
 
         open(
             f"{projectDirection}{releasePlatform} {releaseAuthor}.release.txt",
@@ -252,7 +542,7 @@ for line in lines:
                         n[: n.index(".")], f"展开图{skin.index(i)}"
                     )
                 except Exception as E:
-                    print(f'文件"{projectDirection}"操作时发送错误\n{E}')
+                    prt(f'文件"{projectDirection}"操作时发送错误\n{E}')
 
         for i in projectPicture:
             if i:
@@ -266,7 +556,7 @@ for line in lines:
                         ),
                     )
                 except Exception as E:
-                    print(f'文件"{projectDirection}"操作时发送错误\n{E}')
+                    prt(f'文件"{projectDirection}"操作时发送错误\n{E}')
 
         if projectCopyleftDescription != "未借鉴他人，皮肤是我自己的创新，完全是我做的":
             os.makedirs(f"{projectDirection}借鉴参考/")
@@ -285,88 +575,42 @@ for line in lines:
                             ),
                         )
                     except Exception as E:
-                        print(f'文件"{projectDirection}"操作时发送错误\n{E}')
+                        prt(f'文件"{projectDirection}"操作时发送错误\n{E}')
+
+        # 渲染图片
+
+        prt("正在制作渲染图")
+
+        randerImage(picturePath,random.choice(RenderModelTAlst),f"{projectDirection}渲染图TA_生成###.png",f"{projectDirection}TA渲染日志.log")
+
+        randerImage(picturePath,random.choice(RenderModelTBlst),f"{projectDirection}渲染图TB_生成###.png",f"{projectDirection}TB渲染日志.log")
 
         # 以下是发送组件
 
-        print(f"正在操作组件{projectDirection}")
+        prt(f"正在操作组件{projectDirection}")
 
-        print("====================开始获取图片上传密钥")
+        def upimg(imgPath):
+            responseData, signature = upPic(imgPath)
+            if (responseData is False) and (signature is False):
+                raise 
+            else:
+                return responseData, signature
 
-        firstResult = requests.get(aGETurl, headers=getHeader).json()
+        skinRSPSdata, skinSIGN = upimg(picturePath)
 
-        if firstResult["status"] == "ok":
-            print("成功！已获取密钥")
-            token = firstResult["data"]["token"]
-        else:
-            print("获取密钥失败！")
-            print(firstResult)
-            continue
+        iconRSPSdata, iconSIGN = upimg(f"{projectDirection}渲染图TA_生成000.png")
+        showRSPSdata, showSIGN = upimg(f"{projectDirection}渲染图TB_生成000.png")
 
-        print(f"====================开始上传图片:{picturePath}")
+        # prt(f"响应头({type(responseHeader)})：\n{responseHeader}\n\n响应内容({type(responseData)})：\n{responseData}\n")
+        # prt(f'已获取网易签名：{signature}\n已获取资源url地址：{responseData}')
 
-        aPOSTurl = "https://fp.ps.netease.com/x19/file/new/"
-
-        boundary = "---------------------------" + "".join(
-            [str(random.randint(0, 9)) for i in range(29)]
-        )
-
-        payload = (
-            f"""--{boundary}
-Content-Disposition: form-data; name="Authorization"
-
-{token}
---{boundary}
-Content-Disposition: form-data; name="fpfile"; filename="{projectName}.png"
-Content-Type: image/png
-
-""".encode()
-            + open(
-                picturePath,
-                "rb",
-            ).read()
-            + f"""
---{boundary}--""".encode()
-        )
-
-        # print(f"负载已读取：\n{payload}")
-
-        postHeader = {
-            "Host": "fp.ps.netease.com",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0",
-            "Accept": "*/*",
-            "Accept-Language": "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Content-Type": f"multipart/form-data; boundary={boundary}",
-            "Content-Length": str(len(payload)),
-            "Origin": "https://mcdev.webapp.163.com",
-            "DNT": "1",
-            "Connection": "keep-alive",
-            "Referer": "https://mcdev.webapp.163.com/",
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "cross-site",
-            "TE": "trailers",
-        }
-
-        postresult = requests.post(aPOSTurl, data=payload, headers=postHeader)
-
-        responseHeader = postresult.headers
-        responseData = postresult.text
-
-        signature = responseHeader["X-Ntes-Signature"]
-
-        # print(f"响应头({type(responseHeader)})：\n{responseHeader}\n\n响应内容({type(responseData)})：\n{responseData}\n")
-        # print(f'已获取网易签名：{signature}\n已获取资源url地址：{responseData}')
-        print("图片上传成功")
-
-        print("====================开始投稿资源：获取投稿许可")
+        prt("====================开始投稿资源：获取投稿许可")
 
         requests.options(firsturl, headers=firstheaders)
 
-        print("成功通告服务端")
+        prt("成功通告服务端")
 
-        print("====================开始投稿资源：提交资源信息")
+        prt("====================开始投稿资源：提交资源信息")
         isMember_ = (
             f'<strong style="color: green;" class="ql-size-small">{isMember_}</strong>'
             if isMember_
@@ -481,9 +725,9 @@ Content-Type: image/png
             "res": [
                 {
                     "res_url": {
-                        "body": responseData,
+                        "body": skinRSPSdata,
                         "file_type": "png",
-                        "sign": signature,
+                        "sign": skinSIGN,
                     },
                     "res_name": f"{projectName}.png",
                     "mc_version": [],
@@ -494,9 +738,9 @@ Content-Type: image/png
                 {
                     "channel_id": 5,
                     "channel_url": {
-                        "body": '{"url": "https://x19.fp.ps.netease.com/file/6281287e2ef6ee847a2806d29bOEEKqu04", "mime": "image/png; charset=binary", "fsize": 423480, "md5": "acda3ea7a04a7348b3c8f800cb93307a", "picSize": [1000, 1000]}',
+                        "body": iconRSPSdata,
                         "file_type": "image",
-                        "sign": "h7x9mkkslt7o5tYs1vS4RgRvCpY=",
+                        "sign": iconSIGN,
                     },
                     "channel_required": True,
                     "version": 2,
@@ -504,9 +748,9 @@ Content-Type: image/png
                 {
                     "channel_id": 6,
                     "channel_url": {
-                        "body": '{"url": "https://x19.fp.ps.netease.com/file/628128822ef6ee9b09f0372fEs51Kqk504", "mime": "image/png; charset=binary", "fsize": 346267, "md5": "c4cccee7ed2d50f9f075d5116f1707f8", "picSize": [900, 580]}',
+                        "body": showRSPSdata,
                         "file_type": "image",
-                        "sign": "9Ygz7oDrmnEsvh9t6+gAPETcTvs=",
+                        "sign": showSIGN,
                     },
                     "channel_required": True,
                     "version": 1,
@@ -534,8 +778,8 @@ Content-Type: image/png
 
         result = requests.post(firsturl, headers=headers, json=datadict)
         result = result.json()
-        print(f"组件名称：{projectName}, 作者：{author}")
-        print(
+        prt(f"组件名称：{projectName}, 作者：{author}")
+        prt(
             f'失败：{result["msg"]}'
             if result["status"] == "fail"
             else (
@@ -544,10 +788,10 @@ Content-Type: image/png
                 else f"未知{result}"
             )
         )
-        print()
+        prt()
 
         if result["status"] == "ok":
-            open("saveDataBase.txt",'a',encoding='utf-8').write(f'{result["data"]["item_id"]} {projectName} {author} {isMember} 皮肤 {projectType} {cost_[0]} {cost_[1]} {projectDescription} {projectCopyleftDescription} {responseData}\n\n')
+            open("saveDataBase.txt",'a',encoding='utf-8').write(f'{result["data"]["item_id"]} {projectName} {author} {isMember} 皮肤 {projectType} {cost_[0]} {cost_[1]} {projectDescription} {projectCopyleftDescription} {skinRSPSdata}\n\n')
 
         maxAuthorNameLength = max(len(author), maxAuthorNameLength)
         maxProjectNameLength = max(len(projectName), maxProjectNameLength)
@@ -575,29 +819,29 @@ Content-Type: image/png
         break
 
 
-print("=====-----=====-----统计数据-----=====-----=====")
-print(
+prt("=====-----=====-----统计数据-----=====-----=====")
+prt(
     "\t" * int(maxProjectNameLength / 8 - 1)
     + "组件名称"
     + "\t" * int(maxProjectNameLength / 8),
     end="|",
 )
-print(
+prt(
     "\t" * int(maxAuthorNameLength / 8 - 1)
     + "作者"
     + "\t" * int(maxAuthorNameLength / 8),
     end="|",
 )
-print("状态", end="|")
-print(
+prt("状态", end="|")
+prt(
     "信息",
 )
 
 
 for key, subj in allProjrcts.items():
-    print(f"{key}x{len(subj)}")
+    prt(f"{key}x{len(subj)}")
     for context in subj:
-        print(
+        prt(
             ("■" if context["DEAL"] else '')
             + str(context["name"])
             + "\t" * int((maxProjectNameLength - len(context["name"])) / 4)
@@ -610,8 +854,8 @@ for key, subj in allProjrcts.items():
             + str(context["msg"])
         )
         if context["DEAL"]:
-            print(f"■﹂定价：{context['DEAL'][0]} ;解析结果：{context['DEAL'][1]}")
-    print()
+            prt(f"■﹂定价：{context['DEAL'][0]} ;解析结果：{context['DEAL'][1]}")
+    prt()
 
 
 shutil.rmtree("./temp/")
