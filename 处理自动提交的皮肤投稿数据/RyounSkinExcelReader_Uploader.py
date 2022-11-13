@@ -482,8 +482,8 @@ for line in lines:
             CostErr = True
 
         # 皮肤类型
-        skinType_ = '粗手臂' if line[10] == 'Steve  （粗手臂）' else '细手臂'
-        skinType = "normal" if line[10] == "Steve  （粗手臂）" else "slim"
+        skinType_ = '粗手臂' if line[10] in ('Steve  （粗手臂）','标准 （粗手臂）') else '细手臂'
+        skinType = "normal" if line[10] in ('Steve  （粗手臂）','标准 （粗手臂）') else "slim"
 
         # 皮肤地址
         skin = line[11:17]
