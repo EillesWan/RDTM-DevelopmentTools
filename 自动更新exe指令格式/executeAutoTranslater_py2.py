@@ -37,7 +37,7 @@ def autoTranslate(sentence = ''):
     '''
 
 
-    sentence = sentence.replace("/","")
+    sentence = sentence.replace("/"," ")
 
     if not 'execute' in sentence:
         return sentence
