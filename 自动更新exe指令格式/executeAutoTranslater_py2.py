@@ -16,15 +16,7 @@
 # 自动转换exe指令格式
 
 
-def isWordsinside(string):
-    '''判断字符串是否包含字母
-    :param string: 字符串
-    :return: bool
-    '''
-    for i in string:
-        if i.isalpha():
-            return True
-    return False
+
     
 # 极限挑战
 # execute @a[name="abc 123"] ~~ ~ execute @s ~9 346 ~-8 detect ^6 ^7 ^2 concrete 18 execute @p[r=3,scores={a=3}] 324 ~324 5 scoreboard players add @s[tag="999 888aasd asd "] QWE_AS 2
@@ -36,6 +28,15 @@ def autoTranslate(sentence = ''):
     :return: 新的execute指令
     '''
 
+    def isWordsinside(string):
+        '''判断字符串是否包含字母
+        :param string: 字符串
+        :return: bool
+        '''
+        for i in string:
+            if i.isalpha():
+                return True
+        return False
 
     sentence = sentence.replace("/"," ").lower()
 
@@ -48,13 +49,11 @@ def autoTranslate(sentence = ''):
     # 下面是重点，只有我和老天爷看得懂
     if 'detect' in sentence[:sentence.find("execute",8) if "execute" in sentence[8:] else -1]:
 
-        # print(f"检测到{sentence}含有detect")
+        orign = sentence[sentence.find("execute")+8:(sentence.find("]") if "[" in sentence[:sentence.find("@")+5] else sentence.find("@")+1)+1]
 
-        orign = sentence[sentence.find("execute")+8:(sentence.find("]") if "[" in sentence[:sentence.find("@")+3] else sentence.find("@")+1)+1]
+        position = sentence[(sentence.find("]") if "[" in sentence[:sentence.find("@")+3] else sentence.find("@")+1)+1:sentence.find("detect")-1].strip()
 
-        position = sentence[(sentence.find("]") if "[" in sentence[:sentence.find("@")+3] else sentence.find("@")+1)+2:sentence.find("detect")-1]
-
-        ___ = [ j for i in [[i,] if isWordsinside(i) else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[sentence.find("detect")+7:].split(" ",4)] for j in i ]
+        ___ = [ j for i in [[i,] if isWordsinside(i) else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[sentence.find("detect")+6:].strip().split(" ",4)] for j in i ]
         
         blockpos = " ".join(___[0:3])
 
@@ -66,19 +65,14 @@ def autoTranslate(sentence = ''):
 
         command = " ".join(____[2:])
 
-        return 'execute as '+orign+' positioned as @s positioned '+position+' if block '+blockpos+' '+blockname+' '+blockdata+' at @s positioned '+position+' run '+autoTranslate(command)
+        return 'execute as {} positioned as @s positioned {} if block {} {} {} at @s positioned {} run {}'.format(orign,position,blockpos,blockname,blockdata,position,autoTranslate(command))
         
     else:
 
-        # print(f"检测到{sentence}不含有detect")
 
-        ___ = [ j for i in [[i,] if isWordsinside(i) else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+2:].split(" ",4)] for j in i ]
+        ___ = [ j for i in [[i,] if isWordsinside(i) else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+1:].strip().split(" ",4)] for j in i ]
 
-        return 'execute as '+sentence[sentence.find("execute")+8:(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+1]+' positioned as @s positioned '+" ".join(___[0:3])+' at @s positioned '+" ".join(___[0:3])+' run '+autoTranslate(" ".join(___[3:]))
-        
-        # 我是一个善良的人，没有用下面这个恶心你们
-        # f'execute as {sentence[sentence.find("execute")+8:(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+1]} positioned as @s positioned {" ".join([ j for i in [[i,] if " " in i else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+2:].split(" ",4)] for j in i ][0:3])} at @s positioned {" ".join([ j for i in [[i,] if " " in i else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+2:].split(" ",4)] for j in i ][0:3])} run {autoTranslate(" ".join([ j for i in [[i,] if " " in i else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+2:].split(" ",4)] for j in i ][3:]))}'
-
+        return 'execute as {} positioned as @s positioned {} at @s positioned {} run {}'.format(sentence[sentence.find("execute")+8:(sentence.find("]") if "[" in sentence[:sentence.find("@")+5] else sentence.find("@")+1)+1]," ".join(___[0:3])," ".join(___[0:3]),autoTranslate(" ".join(___[3:])))
 
 
         

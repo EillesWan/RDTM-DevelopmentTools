@@ -57,8 +57,6 @@ def autoTranslate(sentence: str = ''):
     # 下面是重点，只有我和老天爷看得懂
     if 'detect' in sentence[:sentence.find("execute",8) if "execute" in sentence[8:] else -1]:
 
-        # print(f"检测到{sentence}含有detect")
-
         orign = sentence[sentence.find("execute")+8:(sentence.find("]") if "[" in sentence[:sentence.find("@")+5] else sentence.find("@")+1)+1]
 
         position = sentence[(sentence.find("]") if "[" in sentence[:sentence.find("@")+3] else sentence.find("@")+1)+1:sentence.find("detect")-1].strip()
@@ -79,8 +77,6 @@ def autoTranslate(sentence: str = ''):
         
     else:
 
-        # print(f"检测到{sentence}不含有detect")
-        
 
         ___ = [ j for i in [[i,] if isWordsinside(i) else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+1:].strip().split(" ",4)] for j in i ]
 
