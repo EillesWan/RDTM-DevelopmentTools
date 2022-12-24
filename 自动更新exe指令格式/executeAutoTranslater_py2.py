@@ -35,6 +35,10 @@ def autoTranslate(sentence = ''):
     :param sentence: 旧的execute指令
     :return: 新的execute指令
     '''
+
+
+    sentence = sentence.replace("/","")
+
     if not 'execute' in sentence:
         return sentence
     if 'run' in sentence:
