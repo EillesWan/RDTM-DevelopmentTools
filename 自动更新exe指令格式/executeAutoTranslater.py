@@ -49,7 +49,7 @@ def autoTranslate(sentence: str = ''):
     if not 'execute' in sentence:
         return sentence
     if 'run' in sentence:
-        return sentence[sentence.find('run')+4:]
+        return autoTranslate(sentence[sentence.find('run')+4:])
     
 
     # 下面是重点，只有我和老天爷看得懂
