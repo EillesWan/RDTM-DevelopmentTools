@@ -3,19 +3,13 @@
 
 '''
 
-   Copyright 2022 Team-Ryoun
+   Copyright © 2022 Team-Ryoun
 
    Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
 
        http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
 
 '''
 
@@ -54,15 +48,15 @@ def autoTranslate(sentence: str = ''):
 
     # 下面是重点，只有我和老天爷看得懂
     if 'detect' in sentence:
-        orign = sentence[sentence.find("execute")+8:(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+1]
+        orign = sentence[sentence.find("execute")+8:(sentence.find("]") if "[" in sentence[:sentence.find("@")+3] else sentence.find("@")+1)+1]
 
-        position = sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+1:sentence.find("detect")]
+        position = sentence[(sentence.find("]") if "[" in sentence[:sentence.find("@")+3] else sentence.find("@")+1)+2:sentence.find("detect")-1]
 
         ___ = [ j for i in [[i,] if isWordsinside(i) else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[sentence.find("detect")+7:].split(" ",4)] for j in i ]
         
         blockpos = " ".join(___[0:3])
 
-        ____ = " ".join(___[4:]).split(" ")
+        ____ = " ".join(___[3:]).split(" ")
 
         blockname = ____[0]
 
