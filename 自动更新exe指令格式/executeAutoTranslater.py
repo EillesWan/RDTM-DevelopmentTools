@@ -59,7 +59,7 @@ def autoTranslate(sentence: str = ''):
 
         # print(f"检测到{sentence}含有detect")
 
-        orign = sentence[sentence.find("execute")+8:(sentence.find("]") if "[" in sentence[:sentence.find("@")+3] else sentence.find("@")+1)+1]
+        orign = sentence[sentence.find("execute")+8:(sentence.find("]") if "[" in sentence[:sentence.find("@")+5] else sentence.find("@")+1)+1]
 
         position = sentence[(sentence.find("]") if "[" in sentence[:sentence.find("@")+3] else sentence.find("@")+1)+1:sentence.find("detect")-1].strip()
 
@@ -84,7 +84,7 @@ def autoTranslate(sentence: str = ''):
 
         ___ = [ j for i in [[i,] if isWordsinside(i) else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+1:].strip().split(" ",4)] for j in i ]
 
-        return f'execute as {sentence[sentence.find("execute")+8:(sentence.find("]") if "[" in sentence[:sentence.find("@")+3] else sentence.find("@")+1)+1]} positioned as @s positioned {" ".join(___[0:3])} at @s positioned {" ".join(___[0:3])} run {autoTranslate(" ".join(___[3:]))}'
+        return f'execute as {sentence[sentence.find("execute")+8:(sentence.find("]") if "[" in sentence[:sentence.find("@")+5] else sentence.find("@")+1)+1]} positioned as @s positioned {" ".join(___[0:3])} at @s positioned {" ".join(___[0:3])} run {autoTranslate(" ".join(___[3:]))}'
         
         # 我是一个善良的人，没有用下面这个恶心你们
         # f'execute as {sentence[sentence.find("execute")+8:(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+1]} positioned as @s positioned {" ".join([ j for i in [[i,] if " " in i else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+2:].split(" ",4)] for j in i ][0:3])} at @s positioned {" ".join([ j for i in [[i,] if " " in i else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+2:].split(" ",4)] for j in i ][0:3])} run {autoTranslate(" ".join([ j for i in [[i,] if " " in i else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+2:].split(" ",4)] for j in i ][3:]))}'
