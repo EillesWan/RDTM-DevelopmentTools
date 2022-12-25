@@ -39,6 +39,8 @@ def isWordsinside(string: str):
 
 # /execute @a~~~/w @s aaa
 
+# execute@s[tag="[][]  "]~ 1~576detect^6^^66concrete 1 execute @s         [scores={n=0}] ~ ~ ~0.09 execute@s~~~detect 0 0 0 bedrock -1 execute@a [name="999 jjj"]~~ ~ give @s command_block 1 1 {"name_tag":["a":"b"]}
+
 
 def autoTranslate(sentence: str = ''):
     '''传入一行旧的execute指令，则将其转换为新格式
@@ -46,18 +48,44 @@ def autoTranslate(sentence: str = ''):
     :return: 新的execute指令
     '''
 
-    sentence = sentence.replace("/"," ").lower()
 
     if not 'execute' in sentence:
         return sentence
     if 'run' in sentence:
         return autoTranslate(sentence[sentence.find('run')+4:])
+
+    # 避免不规范的语法
+    sentence = sentence.replace("/"," ").lower()
+
+    # 如果选择器的中括号包括空格
+    sentence = (sentence[:sentence.find("@")+2]+sentence[sentence.find('['):]) if '[' in sentence else sentence
+
+    # 如果有字符串包含其中
+    # 我们可以看作一个神奇的pattern
+    startcatch = False
+    strings = []
+    tempstring = ""
+    for i in sentence:
+        if i == '"':
+            startcatch = not startcatch
+            if not startcatch:
+                strings.append(f'{tempstring}"')
+                tempstring = ""
+        if startcatch:
+            tempstring += i
+    for i in strings:
+        sentence = sentence.replace(i,f'我的天哪这是不行的士大夫萨拉发噶苏联官方撒发生官方首发数据库发金羿你永远也写不到这句话{strings.index(i)}')
     
+    
+    def backSentence(a):
+        for i in strings:
+            a = a.replace(f'我的天哪这是不行的士大夫萨拉发噶苏联官方撒发生官方首发数据库发金羿你永远也写不到这句话{strings.index(i)}',i)
+        return a
 
     # 下面是重点，只有我和老天爷看得懂
     if 'detect' in sentence[:sentence.find("execute",8) if "execute" in sentence[8:] else -1]:
 
-        orign = sentence[sentence.find("execute")+8:(sentence.find("]") if "[" in sentence[:sentence.find("@")+5] else sentence.find("@")+1)+1]
+        orign = sentence[sentence.find("execute")+7:(sentence.find("]") if "[" in sentence[:sentence.find("@")+5] else sentence.find("@")+1)+1].strip()
 
         position = sentence[(sentence.find("]") if "[" in sentence[:sentence.find("@")+3] else sentence.find("@")+1)+1:sentence.find("detect")-1].strip()
 
@@ -73,14 +101,16 @@ def autoTranslate(sentence: str = ''):
 
         command = " ".join(____[2:])
 
-        return f'execute as {orign} positioned as @s positioned {position} if block {blockpos} {blockname} {blockdata} at @s positioned {position} run {autoTranslate(command)}'
+        return backSentence('execute as {} positioned as @s positioned {} if block {} {} {} at @s positioned {} run {}'.format(orign,position,blockpos,blockname,blockdata,position,autoTranslate(command)))
         
     else:
 
 
         ___ = [ j for i in [[i,] if isWordsinside(i) else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+1:].strip().split(" ",4)] for j in i ]
 
-        return f'execute as {sentence[sentence.find("execute")+8:(sentence.find("]") if "[" in sentence[:sentence.find("@")+5] else sentence.find("@")+1)+1]} positioned as @s positioned {" ".join(___[0:3])} at @s positioned {" ".join(___[0:3])} run {autoTranslate(" ".join(___[3:]))}'
+        
+
+        return backSentence('execute as {} positioned as @s positioned {} at @s positioned {} run {}'.format(sentence[sentence.find("execute")+7:(sentence.find("]") if "[" in sentence[:sentence.find("@")+5] else sentence.find("@")+1)+1]," ".join(___[0:3])," ".join(___[0:3]),autoTranslate(" ".join(___[3:]))))
         
         # 我是一个善良的人，没有用下面这个恶心你们
         # f'execute as {sentence[sentence.find("execute")+8:(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+1]} positioned as @s positioned {" ".join([ j for i in [[i,] if " " in i else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+2:].split(" ",4)] for j in i ][0:3])} at @s positioned {" ".join([ j for i in [[i,] if " " in i else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+2:].split(" ",4)] for j in i ][0:3])} run {autoTranslate(" ".join([ j for i in [[i,] if " " in i else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+2:].split(" ",4)] for j in i ][3:]))}'
