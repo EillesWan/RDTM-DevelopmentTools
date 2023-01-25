@@ -57,7 +57,7 @@ def autoTranslate(sentence):
     if not 'execute' in sentence:
         return sentence
     elif 'run' in sentence:
-        return autoTranslate(sentence[sentence.find('run')+4:])
+        return sentence[:sentence.find('run')+4]+autoTranslate(sentence[sentence.find('run')+4:])
 
     # 避免不规范的语法
     # 如果选择器的中括号包括空格

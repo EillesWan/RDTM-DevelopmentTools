@@ -30,7 +30,7 @@ def __main__():
         
         context = brotli.decompress(whole[3:])
         
-        a = context if not b"-----BEGIN RSA PUBLIC KEY-----" in context else context[:context.find(b"-----BEGIN RSA PUBLIC KEY-----")-context[:context.find(b"-----BEGIN RSA PUBLIC KEY-----")][::-1].find(b'X')]+'E'
+        a = context if not b"-----BEGIN RSA PUBLIC KEY-----" in context else context[:context.find(b"-----BEGIN RSA PUBLIC KEY-----")-context[:context.find(b"-----BEGIN RSA PUBLIC KEY-----")][::-1].find(b'X')]+b'E'
         replaceLst = []
 
         while b'execute' in a:
