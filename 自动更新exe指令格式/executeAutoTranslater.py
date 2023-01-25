@@ -14,14 +14,7 @@
 '''
 
 # 自动转换exe指令格式
-
-def getMapBlock(startPos: tuple = (0,0,0), endPos: tuple = (0,0,0)):
-    '''传入起始和终止坐标，返回一个区块中的方块
-    :param startPos: 起始坐标
-    :param endPos: 终止坐标
-    :return: list[全部方块]
-    '''
-    pass
+import uuid
 
 
 def isWordsinside(string):
@@ -33,13 +26,22 @@ def isWordsinside(string):
         if i.isalpha():
             return True
     return False
-    
+
+
+def isfloatable(sth: str) -> bool:
+    try:
+        float(sth)
+        return True
+    except:
+        return False    
+
+
 # 极限挑战
 # execute @a[name="abc 123"] ~~ ~ execute @s ~9 346 ~-8 detect ^6 ^7 ^2 concrete 18 execute @p[r=3,scores={a=3}] 324 ~324 5 scoreboard players add @s[tag="999 888aasd asd "] QWE_AS 2
 
 # /execute @a~~~/w @s aaa
 
-# execute@s[tag="[][]  "]~ 1~576detect^6^^66concrete 1 execute @s         [scores={n=0}] ~ ~ ~0.09 execute@s~~~detect 0 0 0 bedrock -1 execute@a [name="999 jjj"]~~ ~ give @s command_block 1 1 {"name_tag":["a":"b"]}
+# execute@s[tag="[][]  你妈死了"]~ 1~576detect^6^^66concrete 1 execute @s         [scores={n=0}] ~ ~ ~0.09 execute@s~~~detect 0 0 0 bedrock -1 execute@a [name="999去他奶奶的 jjj"]~~ ~/execute@s[tag="℃♞"]~ 32 ~5423give @s command_block 1 1 {"name_tag":["a":"b操你妈逼"]}
 
 # 感谢 尘风、籽怼、Happy2018New 为本程序的试错提供了非常有效的支持
 # 也感谢 尘风、Happy2018New、Dislink Sforza 为作者提供相关参考意见
@@ -54,15 +56,14 @@ def autoTranslate(sentence):
 
     if not 'execute' in sentence:
         return sentence
-    if 'run' in sentence:
+    elif 'run' in sentence:
         return autoTranslate(sentence[sentence.find('run')+4:])
 
     # 避免不规范的语法
-    sentence = sentence.replace("/"," ").lower()
-
     # 如果选择器的中括号包括空格
-    sentence = (sentence[:sentence.find("@")+2]+sentence[sentence.find('['):]) if '[' in sentence else sentence
+    sentence = ((sentence[:sentence.find("@")+2]+sentence[sentence.find('['):]) if (sum(0 if i == ' ' else 1 for i in sentence[sentence.find('@')+2:sentence.find('[')])==0) else sentence).replace("/"," ").lower()
 
+    
 
     # 如果有字符串包含其中
     # 我们可以看作一个神奇的pattern
@@ -73,17 +74,33 @@ def autoTranslate(sentence):
         if i == '"':
             startcatch = not startcatch
             if not startcatch:
-                strings.append('{}"'.format(tempstring))
+                tpp = '{}"'.format(tempstring)
+                tag = str(uuid.uuid4())
+                sentence = sentence.replace(tpp,tag)
+                strings.append((tpp,tag))
                 tempstring = ""
         if startcatch:
             tempstring += i
-    for i in strings:
-        sentence = sentence.replace(i,'我的天哪这是不行的士大夫萨拉发噶撒发生官方首发数据库发金羿你永远也写不到这句话{}'.format(strings.index(i)))
+
     
+
+
+    sentence = list(sentence)
+    # 如果有神奇的东西在坐标后面，那就神奇了
+    for i in range(len(sentence)):
+        if sentence[i] in ('^','~') and sentence[i+1] != ' ':
+            j = i + 1
+            while isfloatable("".join(sentence[i+1:j+1])):
+                j+=1
+            if sentence[j] == " ":
+                continue
+            else:
+                sentence.insert(j,' ')
+    sentence = "".join(sentence)
     
     def backSentence(a):
-        for i in strings:
-            a = a.replace('我的天哪这是不行的士大夫萨拉发噶撒发生官方首发数据库发金羿你永远也写不到这句话{}'.format(strings.index(i)),i)
+        for tpp,tag in strings:
+            a = a.replace(tag,tpp)
         return a
 
     # 下面是重点，只有我和老天爷看得懂
@@ -130,6 +147,7 @@ def __main__():
             sentence = input()
             print()
             print(autoTranslate(sentence))
+            print("="*10)
         except EOFError:
             break
         except Exception as e:

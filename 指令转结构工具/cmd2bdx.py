@@ -23,7 +23,6 @@ https://gitee.com/EillesWan/Musicreater/tree/pkgver/
 
 
 def __formCMDblk(
-    self,
     command: str,
     particularValue: int,
     impluse: int = 0,
@@ -95,7 +94,7 @@ def __formCMDblk(
     return block
 
 
-def __fillSquareSideLength(self, total: int, maxHeight: int):
+def __fillSquareSideLength(total: int, maxHeight: int):
     """给定总方块数量和最大高度，返回所构成的图形外切正方形的边长
     :param total: 总方块数量
     :param maxHeight: 最大高度
@@ -222,10 +221,8 @@ def formatipt(notice: str, fun, errnote: str = "", *extraArg):
 path = formatipt("请输入函数文件地址：", os.path.isfile, "地址无效，请重新输入")[0]
 
 # 用双换行分割每段
-functions = open(path, 'r', encoding="utf-8").read().split("\n\n")
-
 # 单换行分每行
-functionList = [[j for j in i.split("\n")] for i in functions]
+functionList = [[j[:j.find("#")].strip() for j in i.split("\n")] for i in open(path, 'r', encoding="utf-8").read().split("\n\n")]
 
 
 toBDXfile(
