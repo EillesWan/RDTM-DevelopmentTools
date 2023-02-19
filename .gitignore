@@ -4,9 +4,12 @@
 处理自动提交的皮肤投稿数据/*.xlsx
 处理自动提交的皮肤投稿数据/result.txt
 处理自动提交的皮肤投稿数据/新建文本文档.txt
-处理自动提交的皮肤投稿数据/Cookie.txt
+Cookie.txt
 处理自动提交的皮肤投稿数据/saveDataBase.txt
 处理自动提交的皮肤投稿数据/*/
+items_list_result.json
+items_data_result.json
+items_draw_result.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
