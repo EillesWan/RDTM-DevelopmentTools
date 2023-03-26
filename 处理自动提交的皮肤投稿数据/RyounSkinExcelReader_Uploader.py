@@ -519,7 +519,9 @@ for line in lines:
         try:
             os.makedirs(projectDirection)
         except FileExistsError:
-            prt(f"\n\n目录已存在 {projectDirection} 此组件(之一)已被跳过\n\n")
+            prt(f"\n\n目录已存在 {projectDirection} 此组件处于更新状态\n\n")
+            while os.path.exists(f"{projectDirection}{releasePlatform} {releaseAuthor}.release.txt",):
+                projectDirection += 'New_'
         except Exception as E:
             prt(f"\n\n创建目录时发生未知错误 {E} 此组件已被跳过\n\n")
 

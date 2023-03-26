@@ -215,12 +215,15 @@ for line in lines:
 
         # 信息处理
 
+
         projectDirection = f"./result/{projectName}（{author}{isMember}）/"
 
         try:
             os.makedirs(projectDirection)
         except FileExistsError:
-            print(f"\n\n目录已存在 {projectDirection} 此组件(之一)已被跳过\n\n")
+            print(f"\n\n目录已存在 {projectDirection} 此组件处于更新状态\n\n")
+            while os.path.exists(f"{projectDirection}{releasePlatform} {releaseAuthor}.release.txt",):
+                projectDirection += 'New_'
         except Exception as E:
             print(f"\n\n创建目录时发生未知错误 {E} 此组件已被跳过\n\n")
 
