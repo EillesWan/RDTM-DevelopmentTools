@@ -34,59 +34,31 @@ Copyright 2022 Team-Ryoun: 金羿("Eilles Wan")
 
 
 import os
-import math
-import brotli
-
-
-key = {
-    "x": [b"\x0f", b"\x0e", b"\x1c", b"\x14", b"\x15"],
-    "y": [b"\x11", b"\x10", b"\x1d", b"\x16", b"\x17"],
-    "z": [b"\x13", b"\x12", b"\x1e", b"\x18", b"\x19"],
-}
-"""key存储了方块移动指令的数据，其中可以用key[x|y|z][0|1]来表示xyz的减或增
-而key[][2+]是用来增加指定数目的"""
+from TrimMCStruct import Structure, Block, TAG_Long, TAG_Byte
 
 x = "x"
 y = "y"
 z = "z"
 
 
-def move(axis: str, value: int):
-    if value == 0:
-        return b""
-    if abs(value) == 1:
-        return key[axis][0 if value == -1 else 1]
-
-    pointer = sum(
-        [
-            1 if i else 0
-            for i in (
-                value != -1,
-                value < -1 or value > 1,
-                value < -128 or value > 127,
-                value < -32768 or value > 32767,
-            )
-        ]
-    )
-
-    return key[axis][pointer] + value.to_bytes(2 ** (pointer - 2), "big", signed=True)
-
-
-def formCMDblk(
+def form_command_block_in_NBT_struct(
     command: str,
+    coordinate: tuple,
     particularValue: int,
     impluse: int = 0,
     condition: bool = False,
-    needRedstone: bool = True,
+    alwaysRun: bool = True,
     tickDelay: int = 0,
     customName: str = "",
     executeOnFirstTick: bool = False,
     trackOutput: bool = True,
 ):
     """
-    使用指定项目返回指定的指令方块放置指令项
+    使用指定项目返回指定的指令方块结构
     :param command: `str`
         指令
+    :param coordinate: `tuple[int,int,int]`
+        此方块所在之相对坐标
     :param particularValue:
         方块特殊值，即朝向
             :0	下	无条件
@@ -112,36 +84,54 @@ def formCMDblk(
             0脉冲 1循环 2连锁
     :param condition: `bool`
         是否有条件
-    :param needRedstone: `bool`
-        是否需要红石
+    :param alwaysRun: `bool`
+        是否始终执行
     :param tickDelay: `int`
         执行延时
     :param customName: `str`
         悬浮字
-    lastOutput: `str`
-        上次输出字符串，注意此处需要留空
     :param executeOnFirstTick: `bool`
-        执行第一个已选项(循环指令方块是否激活后立即执行，若为False，则从激活时起延迟后第一次执行)
+        首刻执行(循环指令方块是否激活后立即执行，若为False，则从激活时起延迟后第一次执行)
     :param trackOutput: `bool`
         是否输出
 
     :return:str
     """
-    block = b"\x24" + particularValue.to_bytes(2, byteorder="big", signed=False)
 
-    for i in [
-        impluse.to_bytes(4, byteorder="big", signed=False),
-        bytes(command, encoding="utf-8") + b"\x00",
-        bytes(customName, encoding="utf-8") + b"\x00",
-        bytes("", encoding="utf-8") + b"\x00",
-        tickDelay.to_bytes(4, byteorder="big", signed=True),
-        executeOnFirstTick.to_bytes(1, byteorder="big"),
-        trackOutput.to_bytes(1, byteorder="big"),
-        condition.to_bytes(1, byteorder="big"),
-        needRedstone.to_bytes(1, byteorder="big"),
-    ]:
-        block += i
-    return block
+    return Block(
+        "minecraft",
+        "command_block"
+        if impluse == 0
+        else ("repeating_command_block" if impluse == 1 else "chain_command_block"),
+        states={"conditional_bit": condition, "facing_direction": particularValue},
+        extra_data={
+            "block_entity_data": {
+                "Command": command,
+                "CustomName": customName,
+                "ExecuteOnFirstTick": executeOnFirstTick,
+                "LPCommandMode": 0,
+                "LPCondionalMode": False,
+                "LPRedstoneMode": False,
+                "LastExecution": TAG_Long(0),
+                "LastOutput": "",
+                "LastOutputParams": [],
+                "SuccessCount": 0,
+                "TickDelay": tickDelay,
+                "TrackOutput": trackOutput,
+                "Version": 25,
+                "auto": alwaysRun,
+                "conditionMet": False,  # 是否已经满足条件
+                "conditionalMode": condition,
+                "id": "CommandBlock",
+                "isMovable": True,
+                "powered": False,  # 是否已激活
+                "x": coordinate[0],
+                "y": coordinate[1],
+                "z": coordinate[2],
+            }
+        },
+        compability_version=17959425,
+    )
 
 
 axisParticularValue = {
@@ -160,33 +150,12 @@ axisParticularValue = {
 }
 
 
-def toLineBDXbytes(
-    commands: list,
-    axis: str,
-    forward: bool,
-):
-    _bytes = b""
-    for cmd, condition in commands:
-        _bytes += formCMDblk(
-            cmd,
-            axisParticularValue[axis][forward],
-            impluse=2,
-            condition=condition,
-            needRedstone=False,
-            tickDelay=0,
-            customName="",
-            executeOnFirstTick=False,
-            trackOutput=True,
-        ) + move(axis, 1 if forward else -1)
-    return _bytes
 
 
-def toLineBDXfile(
+def to_structure_lines(
     funcList: list,
     axis_: str,
     forward_: bool,
-    author: str = "Eilles",
-    outfile: str = "./test.bdx",
 ):
     """
     Parameters
@@ -197,42 +166,42 @@ def toLineBDXfile(
         坐标增值方向，只能是小写的 `x`,`y`,`z`
     forward_: bool
         是否沿着坐标轴的正方向
-    author: str
-        作者名称
-    outfile: str
-        输出文件
     
     Returns
     -------
-        成功与否，指令总长度，指令结构总大小
+        成功与否，指令结构总大小
     """
 
-    with open(os.path.abspath(outfile), "w+", encoding="utf-8") as f:
-        f.write("BD@")
+    struct_size = {
+        x: 0,
+        y: 1,
+        z: 0,
+    }
 
-    _bytes = (
-        b"BDX\x00"
-        + author.encode("utf-8")
-        + b" & Team-Ryoun: BDX Generator\x00\x01command_block\x00"
-    )
-    totalSize = {x: 0, y: 0, z: 0}
-    totalLen = 0
+    max_length = max([len(i) for i in funcList])
+
+    struct_size[axis_] = max_length
+    struct_size[x if axis_ == z else z] = len(funcList) * 2
+    struct = Structure([i for i in struct_size.values()])
+    now_pos = {x: 1, y: 1, z: 1} if forward_ else struct_size.copy()
     for func in funcList:
-        totalLen += len(func)
-        _bytes += toLineBDXbytes(func, axis_, forward_)
-        _bytes += move(z if axis_ == x else x, 2)
-        _bytes += move(axis_, -len(func))
+        now_pos[axis_] = 1 if forward_ else max_length
+        now_pos[x if axis_ == z else z] += 2 if forward_ else -2
+        for cmd, cdt in func:
+            actually_pos = [i - 1 for i in now_pos.values()]
+            struct.set_block(
+                actually_pos,
+                form_command_block_in_NBT_struct(
+                    command=cmd,
+                    coordinate= actually_pos,
+                    particularValue=axisParticularValue[axis_][forward_],
+                    impluse=2,
+                    condition=cdt,
+                ),
+            )
+            now_pos[axis_] += 1 if forward_ else -1
 
-        totalSize[z if axis_ == x else x] += 2
-        totalSize[axis_] = max(totalSize[axis_], len(func))
-
-    with open(
-        os.path.abspath(outfile),
-        "ab+",
-    ) as f:
-        f.write(brotli.compress(_bytes + b"XE"))
-
-    return (True, totalLen, list(totalSize.values()))
+    return struct, [i for i in struct_size.values()]
 
 
 def formatipt(notice: str, fun, errnote: str = "", *extraArg):
@@ -279,10 +248,15 @@ def isinXYZ(sth):
         raise
 
 
-toLineBDXfile(
+struct, size = to_structure_lines(
     functionList,
     *(formatipt("请输入生成结构的生成方向(如x+、z-等)：", isinXYZ, "输入数据应符合 轴+正负符号 的格式。")[1]),
-    input("请输入作者："),
-    path[: len(path) - path[::-1].find(".")] + "bdx",
 )
+
+with open(path[: len(path) - path[::-1].find(".")] + "mcstructure",'wb') as f:
+    struct.dump(f)
+
+print("文件已保存，结构大小：",size)
+
+
 # print(functionList)

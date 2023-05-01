@@ -1,0 +1,5 @@
+# 指令转BDX
+curl https://gitee.com/EillesWan/RDTM-DevelopmentTools/raw/master/%E6%8C%87%E4%BB%A4%E8%BD%AC%E7%BB%93%E6%9E%84%E5%B7%A5%E5%85%B7/cmd2bdx.py https://gitee.com/EillesWan/RDTM-DevelopmentTools/raw/master/%E6%8C%87%E4%BB%A4%E8%BD%AC%E7%BB%93%E6%9E%84%E5%B7%A5%E5%85%B7/LICENSE(Musicreater).md --output cmd2bdx.py LICENSE(Musicreater).md
+
+# 指令转mcstructure结构
+curl https://gitee.com/EillesWan/RDTM-DevelopmentTools/raw/master/%E6%8C%87%E4%BB%A4%E8%BD%AC%E7%BB%93%E6%9E%84%E5%B7%A5%E5%85%B7/cmd2mcstructure.py https://gitee.com/EillesWan/RDTM-DevelopmentTools/raw/master/%E6%8C%87%E4%BB%A4%E8%BD%AC%E7%BB%93%E6%9E%84%E5%B7%A5%E5%85%B7/LICENSE(Musicreater).md --output cmd2mcstructure.py LICENSE(Musicreater).md 
