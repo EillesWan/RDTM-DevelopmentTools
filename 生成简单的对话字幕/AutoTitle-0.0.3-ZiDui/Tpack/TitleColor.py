@@ -1,11 +1,4 @@
 def InsertColor(Afterlist):
-    global Tergodic
-    global subscript
-    global Insert_inputColor
-    global Standby_Str1
-    global Standby_Str2
-    global colorlist
-    global indexnum
     colorlist=[]
     Standby_Str1=''
     Standby_Str2=''
