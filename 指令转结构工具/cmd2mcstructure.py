@@ -186,7 +186,6 @@ def to_structure_lines(
     now_pos = {x: 1, y: 1, z: 1} if forward_ else struct_size.copy()
     for func in funcList:
         now_pos[axis_] = 1 if forward_ else max_length
-        now_pos[x if axis_ == z else z] += 2 if forward_ else -2
         for cmd, cdt in func:
             actually_pos = [i - 1 for i in now_pos.values()]
             struct.set_block(
@@ -200,6 +199,7 @@ def to_structure_lines(
                 ),
             )
             now_pos[axis_] += 1 if forward_ else -1
+        now_pos[x if axis_ == z else z] += 2 if forward_ else -2
 
     return struct, [i for i in struct_size.values()]
 
