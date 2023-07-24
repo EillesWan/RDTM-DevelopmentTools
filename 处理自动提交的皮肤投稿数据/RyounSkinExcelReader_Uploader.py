@@ -412,8 +412,8 @@ maxProjectNameLength = 0
 maxAuthorNameLength = 0
 
 
-for line in lines:
-    if lines.index(line) == 0:
+for line in lines:# type: ignore
+    if lines.index(line) == 0:# type: ignore
         continue
     if line[0]:
         # open('result.txt','a',encoding='utf-8').write(str(tuple(enumerate(line)))+'\n\n')
@@ -591,9 +591,9 @@ for line in lines:
 
         prt("正在制作渲染图")
 
-        randerImage(picturePath,random.choice(RenderModelTAlst),f"{projectDirection}渲染图TA_生成###.png",f"{projectDirection}TA渲染日志.log")
+        randerImage(picturePath,random.choice(RenderModelTAlst),f"{projectDirection}渲染图TA_生成###.png",f"{projectDirection}TA渲染日志.log")# type: ignore
 
-        randerImage(picturePath,random.choice(RenderModelTBlst),f"{projectDirection}渲染图TB_生成###.png",f"{projectDirection}TB渲染日志.log")
+        randerImage(picturePath,random.choice(RenderModelTBlst),f"{projectDirection}渲染图TB_生成###.png",f"{projectDirection}TB渲染日志.log")# type: ignore
 
         # 以下是发送组件
 
@@ -601,14 +601,14 @@ for line in lines:
 
 
 
-        skinRSPSdata, skinSIGN = upPic(picturePath)
+        skinRSPSdata, skinSIGN = upPic(picturePath)# type: ignore
         if not (skinRSPSdata and skinSIGN):
             allProjrcts['错误'].append(
                 {
                     "name": projectName,
                     "author": author,
                     "status": '错误',
-                    "msg": f'[本地]无法上传图片{picturePath}',
+                    "msg": f'[本地]无法上传图片{picturePath}',# type: ignore
                     "DEAL": (projectCost, cost_) if CostErr else False,
                 }
             )

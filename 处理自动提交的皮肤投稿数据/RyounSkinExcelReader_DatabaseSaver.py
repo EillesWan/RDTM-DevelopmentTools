@@ -264,8 +264,8 @@ def randerImage(imagePath:str, blendFile: str,finalPath: str = '渲染结果###.
 
 
 
-for line in lines:
-    if lines.index(line) == 0:
+for line in lines:# type: ignore
+    if lines.index(line) == 0:# type: ignore
         continue
     if line[0]:
         # open('result.txt','a',encoding='utf-8').write(str(tuple(enumerate(line)))+'\n\n')
@@ -443,9 +443,9 @@ for line in lines:
 
         prt("正在制作渲染图")
 
-        randerImage(picturePath,random.choice(RenderModelTAlst),f"{projectDirection}渲染图TA_生成###.png",f"{projectDirection}TA渲染日志.log")
+        randerImage(picturePath,random.choice(RenderModelTAlst),f"{projectDirection}渲染图TA_生成###.png",f"{projectDirection}TA渲染日志.log")# type: ignore
 
-        randerImage(picturePath,random.choice(RenderModelTBlst),f"{projectDirection}渲染图TB_生成###.png",f"{projectDirection}TB渲染日志.log")
+        randerImage(picturePath,random.choice(RenderModelTBlst),f"{projectDirection}渲染图TB_生成###.png",f"{projectDirection}TB渲染日志.log")# type: ignore
 
 
 

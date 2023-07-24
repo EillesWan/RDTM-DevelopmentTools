@@ -35,7 +35,8 @@ def unzip(zipFile, targetDirection):
 
 try:
     file = sys.argv[1]
-    unzip(sys.argv[2], './temp/')
+    if not os.path.exists("./temp/"):
+        unzip(sys.argv[2], './temp/')
 except IndexError:
     file = ''
     zipf = ''
@@ -57,19 +58,19 @@ app.display_alerts = False
 book = app.books.open(file, read_only=True)
 
 
-lines = book.sheets(1).range('A1:AG50').value
+lines = book.sheets(1).range('A1:AG150').value
 
 # open('result.txt','w',encoding='utf-8')
 
-for line in lines:
-    if lines.index(line) == 0:
+for line in lines:# type: ignore
+    if lines.index(line) == 0:# type: ignore
         continue
     if line[0]:
         # open('result.txt','a',encoding='utf-8').write(str(tuple(enumerate(line)))+'\n\n')
 
         # 信息读入
 
-        author = line[3].replace('\n', ' ')
+        author = line[3].replace('\n', ' ').replace(':','：')
         isMember = (
             '【外】'
             if line[4] == '以上皆非'
@@ -84,7 +85,7 @@ for line in lines:
             )
         )
         authorQQ = '作者QQ ' + str(line[6])
-        projectName = line[7].replace('\n', ' ')
+        projectName = line[7].replace('\n', ' ').replace(':','：')
         projectType = line[8].replace('\n', ' ')
         projectCost = line[9].replace('\n', ' ').replace('*','')
         skinType = '粗手臂' if line[10] == 'Steve  （粗手臂）' else '细手臂'
@@ -129,9 +130,9 @@ for line in lines:
             if i:
                 n = i.replace(':', '-').replace('/', '-')
                 try:
-                    shutil.move(f'./temp/{n}', projectDirection)
+                    shutil.move(f'./temp/{n}.{os.path.splitext(n)[-1]}', projectDirection)
                     os.rename(
-                        f'{projectDirection}{n}',
+                        f'{projectDirection}{n}.{os.path.splitext(n)[-1]}',
                         f'{projectDirection}{n}'.replace(
                             n[: n.index('.')], f'展开图{skin.index(i)}'
                         ),
@@ -143,9 +144,9 @@ for line in lines:
             if i:
                 n = i.replace(':', '-').replace('/', '-')
                 try:
-                    shutil.move(f'./temp/{n}', projectDirection)
+                    shutil.move(f'./temp/{n}.{os.path.splitext(n)[-1]}', projectDirection)
                     os.rename(
-                        f'{projectDirection}{n}',
+                        f'{projectDirection}{n}.{os.path.splitext(n)[-1]}',
                         f'{projectDirection}{n}'.replace(
                             n[: n.index('.')], f'展示图Show{projectPicture.index(i)}'
                         ),
@@ -162,9 +163,9 @@ for line in lines:
                 if i:
                     n = i.replace(':', '-').replace('/', '-')
                     try:
-                        shutil.move(f'./temp/{n}', f'{projectDirection}借鉴参考/')
+                        shutil.move(f'./temp/{n}.{os.path.splitext(n)[-1]}', f'{projectDirection}借鉴参考/')
                         os.rename(
-                            f'{projectDirection}借鉴参考/{n}',
+                            f'{projectDirection}借鉴参考/{n}.{os.path.splitext(n)[-1]}',
                             f'{projectDirection}借鉴参考/{n}'.replace(
                                 n[: n.index('.')], f'参考图{projectCopyleftPic.index(i)}'
                             ),
@@ -176,7 +177,7 @@ for line in lines:
         break
 
 
-shutil.rmtree('./temp/')
+# shutil.rmtree('./temp/')
 
 book.close()
 app.quit()

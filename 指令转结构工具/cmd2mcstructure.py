@@ -128,7 +128,7 @@ def form_command_block_in_NBT_struct(
                 "x": coordinate[0],
                 "y": coordinate[1],
                 "z": coordinate[2],
-            }
+            } # type: ignore
         },
         compability_version=17959425,
     )
@@ -182,7 +182,7 @@ def to_structure_lines(
 
     struct_size[axis_] = max_length
     struct_size[x if axis_ == z else z] = len(funcList) * 2
-    struct = Structure([i for i in struct_size.values()])
+    struct = Structure([i for i in struct_size.values()]) # type: ignore
     now_pos = {x: 1, y: 1, z: 1} if forward_ else struct_size.copy()
     for func in funcList:
         now_pos[axis_] = 1 if forward_ else max_length
@@ -190,10 +190,10 @@ def to_structure_lines(
         for cmd, cdt in func:
             actually_pos = [i - 1 for i in now_pos.values()]
             struct.set_block(
-                actually_pos,
+                actually_pos,# type: ignore
                 form_command_block_in_NBT_struct(
                     command=cmd,
-                    coordinate= actually_pos,
+                    coordinate= actually_pos,# type: ignore
                     particularValue=axisParticularValue[axis_][forward_],
                     impluse=2,
                     condition=cdt,
