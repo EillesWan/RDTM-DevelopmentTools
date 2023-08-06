@@ -34,7 +34,6 @@ Copyright 2022 Team-Ryoun: 金羿("Eilles Wan")
 
 
 import os
-import math
 import brotli
 
 
@@ -160,24 +159,50 @@ axisParticularValue = {
 }
 
 
+def anti(axis: str):
+    return z if axis == x else x
+
+
+def goahead(forward: bool):
+    return 1 if forward else -1
+
+
 def toLineBDXbytes(
     commands: list,
     axis: str,
     forward: bool,
+    limit: int = 128,
 ):
     _bytes = b""
-    for cmd, condition in commands:
+    nowf = True
+    nowgo = 0
+    for cmd, condition, note in commands:
+        is_point = ((nowgo != 0) and (not nowf)) or (nowf and (nowgo != (limit - 1)))
         _bytes += formCMDblk(
             cmd,
-            axisParticularValue[axis][forward],
+            axisParticularValue[axis][not forward ^ nowf]
+            if is_point
+            else axisParticularValue[anti(axis)][True],
             impluse=2,
             condition=condition,
             needRedstone=False,
             tickDelay=0,
-            customName="",
+            customName=note,
             executeOnFirstTick=False,
             trackOutput=True,
-        ) + move(axis, 1 if forward else -1)
+        )
+        nowgo += goahead(nowf)
+
+        if ((nowgo >= limit) and nowf) or ((nowgo < 0) and (not nowf)):
+            nowgo -= goahead(nowf)
+
+            nowf = not nowf
+
+            _bytes += move(anti(axis), 1)
+
+        else:
+            _bytes += move(axis, goahead(not forward ^ nowf))
+
     return _bytes
 
 
@@ -185,6 +210,7 @@ def toLineBDXfile(
     funcList: list,
     axis_: str,
     forward_: bool,
+    limit_: int = 128,
     author: str = "Eilles",
     outfile: str = "./test.bdx",
 ):
@@ -197,11 +223,13 @@ def toLineBDXfile(
         坐标增值方向，只能是小写的 `x`,`y`,`z`
     forward_: bool
         是否沿着坐标轴的正方向
+    limit_: int
+        在延展方向上的长度限制
     author: str
         作者名称
     outfile: str
         输出文件
-    
+
     Returns
     -------
         成功与否，指令总长度，指令结构总大小
@@ -215,16 +243,40 @@ def toLineBDXfile(
         + author.encode("utf-8")
         + b" & Team-Ryoun: BDX Generator\x00\x01command_block\x00"
     )
-    totalSize = {x: 0, y: 0, z: 0}
+    totalSize = {x: 0, y: 1, z: 0}
     totalLen = 0
-    for func in funcList:
-        totalLen += len(func)
-        _bytes += toLineBDXbytes(func, axis_, forward_)
-        _bytes += move(z if axis_ == x else x, 2)
-        _bytes += move(axis_, -len(func))
 
-        totalSize[z if axis_ == x else x] += 2
-        totalSize[axis_] = max(totalSize[axis_], len(func))
+    # 非链延展方向，即系统延展方向
+    antiaxis = anti(axis_)
+
+    while funcList:
+        func = funcList.pop(0)
+
+        nowlen = len(func)
+
+        totalLen += nowlen
+
+        # 走一条链的指令方块，会自动复位
+        _bytes += toLineBDXbytes(func, axis_, forward_, limit_)
+
+        # 不是最后一组
+        if funcList:
+            if totalSize[antiaxis] + 2 <= limit_:
+                # 没到头，那就 向前走两步？
+                _bytes += move(antiaxis, 2)
+            else:
+                # 到头了，那就退回去？
+                _bytes += move(antiaxis, -totalSize[antiaxis])
+
+            # _bytes += move(axis_, -len(func))
+
+            # 计算系统延展方向的长度
+            totalSize[antiaxis] += 2 + nowlen // limit_
+        else:
+            totalSize[antiaxis] += 1 + nowlen // limit_
+
+        # 计算链延展方向的长度
+        totalSize[axis_] = min(max(totalSize[axis_], nowlen), limit_)
 
     with open(
         os.path.abspath(outfile),
@@ -257,6 +309,7 @@ path = formatipt("请输入函数文件地址：", os.path.isfile, "地址无效
 # 用双换行分割每段
 # 单换行分每行
 cdt = False
+note = ""
 functionList = []
 for lines in open(path, "r", encoding="utf-8").read().split("\n\n"):
     funcGroup = []
@@ -264,9 +317,20 @@ for lines in open(path, "r", encoding="utf-8").read().split("\n\n"):
         if line.strip().startswith("#"):
             if "cdt" in line.lower():
                 cdt = True
+            note = line[1:].replace("cdt", "").strip()
         else:
-            funcGroup.append((line, cdt))
+            if "#" not in line:
+                funcGroup.append((line, cdt, note))
+            else:
+                funcGroup.append(
+                    (
+                        line[: line.find("#")].strip(),
+                        cdt,
+                        line[line.find("#") + 1 :].strip() + note,
+                    )
+                )
             cdt = False
+            note = ""
     functionList.append(funcGroup)
 
 # print(functionList)
@@ -282,6 +346,7 @@ def isinXYZ(sth):
 toLineBDXfile(
     functionList,
     *(formatipt("请输入生成结构的生成方向(如x+、z-等)：", isinXYZ, "输入数据应符合 轴+正负符号 的格式。")[1]),
+    formatipt("请输入长度限制：", int, "请输入数字，即您希望生成结构的最大延展长度。")[1],
     input("请输入作者："),
     path[: len(path) - path[::-1].find(".")] + "bdx",
 )

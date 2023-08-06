@@ -22,7 +22,7 @@ Copyright © 2023 all the developers of Musicreater
 
 继承协议：
 
-Copyright 2022 Team-Ryoun: 金羿("Eilles Wan")
+Copyright 2023 Team-Ryoun: 金羿("Eilles Wan")
 
    Licensed under the Apache License, Version 2.0
    you may not use this file except in compliance with the License.
@@ -156,6 +156,7 @@ def to_structure_lines(
     funcList: list,
     axis_: str,
     forward_: bool,
+    limit: int,
 ):
     """
     Parameters
@@ -166,6 +167,8 @@ def to_structure_lines(
         坐标增值方向，只能是小写的 `x`,`y`,`z`
     forward_: bool
         是否沿着坐标轴的正方向
+    limit: int
+        在延展方向上的长度限制
     
     Returns
     -------
