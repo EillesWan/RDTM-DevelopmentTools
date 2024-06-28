@@ -37,7 +37,10 @@ def unzip(zipFile, targetDirection):
 
 try:
     file = sys.argv[1]
-    unzip(sys.argv[2], "./temp/")
+    if sys.argv[2].endswith(".zip"):
+        unzip(sys.argv[2], "./temp/")
+    else:
+        shutil.copytree(sys.argv[2], "./temp/")
 except IndexError:
     file = ""
     zipf = ""
@@ -129,7 +132,7 @@ for line in lines:
 
         # 信息读入
 
-        author = line[3].replace("\n", " ")
+        author = line[3].replace("\n", " ").replace(":", "：")
         isMember_ = (
             "【非本团队成员】"
             if line[4] == "以上皆非"
@@ -142,7 +145,7 @@ for line in lines:
                     else ("【凌创工作室成员】" if "工作室" in line[4] else "")
                 )
             )
-        )
+        ).replace(":", "：")
         isMember = (
             '【外】'
             if line[4] == '以上皆非'
@@ -155,13 +158,13 @@ for line in lines:
                     else ('【工作室】' if '工作室' in line[4] else '')
                 )
             )
-        )
-        authorQQ = "作者QQ " + str(line[6])
-        projectName = line[7].replace("\n", " ")
-        projectType = line[8].replace("\n", " ")
+        ).replace(":", "：")
+        authorQQ = "作者QQ " + str(line[6]).replace(":", "：")
+        projectName = line[7].replace("\n", " ").replace(":", "：")
+        projectType = line[8].replace("\n", " ").replace(":", "：")
 
         # 资源定价所需要的资源类型 免费free|绿宝石point|钻石diamond|礼包gift
-        projectCost = line[9].replace("\n", " ").replace("*", "")
+        projectCost = line[9].replace("\n", " ").replace("*", "").replace(":", "：")
 
         CostErr = False
 
@@ -211,7 +214,7 @@ for line in lines:
             if line[31] == "仅发布网易"
             else ("允许其他平台" if line[31] == "可以发布其他平台" else "【注】")
         )
-        releaseAuthor = line[32] if (line[32] != "无需作答" and line[32]) else "金羿"
+        releaseAuthor = str("凌创" if ("凌天之云创新团队" in line[32]) else ("ICW" if "ICW" in line[32] else line[32])).replace("\n", " ").replace("*", "").replace(":", "：") if line[32] else "凌创"
 
         # 信息处理
 
@@ -243,9 +246,9 @@ for line in lines:
             if i:
                 n = i.replace(":", "-").replace("/", "-")
                 try:
-                    shutil.move(f"./temp/{n}", projectDirection)
+                    shutil.move(f"./temp/{n}..png", projectDirection)
                     os.rename(
-                        f"{projectDirection}{n}",
+                        f"{projectDirection}{n}..png",
                         f"{projectDirection}{n}".replace(
                             n[: n.index(".")], f"展开图{skin.index(i)}"
                         ),
@@ -260,9 +263,9 @@ for line in lines:
             if i:
                 n = i.replace(":", "-").replace("/", "-")
                 try:
-                    shutil.move(f"./temp/{n}", projectDirection)
+                    shutil.move(f"./temp/{n}..jpeg", projectDirection)
                     os.rename(
-                        f"{projectDirection}{n}",
+                        f"{projectDirection}{n}..jpeg",
                         f"{projectDirection}{n}".replace(
                             n[: n.index(".")], f"展示图Show{projectPicture.index(i)}"
                         ),

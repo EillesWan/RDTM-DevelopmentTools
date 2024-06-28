@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import optimize
- 
+
 def func(x,w,h,k,a,b,c):#需要拟合的函数
     return np.exp(k*(a*np.sin(x+c)+b)/(x+w)+h)
     
