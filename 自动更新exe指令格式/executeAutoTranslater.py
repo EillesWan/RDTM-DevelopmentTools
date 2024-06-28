@@ -73,11 +73,12 @@ def autoTranslate(sentence:str):
     sentence = list(sentence)
     # 如果有神奇的东西在坐标后面，那就神奇了
     for i in range(len(sentence)):
-        if sentence[i] in ('^','~') and sentence[i+1] != ' ':
+        if sentence[i] in ('^','~'):
             j = i + 1
-            while isfloatable("".join(sentence[i+1:j+1])):
+            while (isfloatable("".join(sentence[i+1:j+1])))or(sentence[i+1] == "-" and isfloatable("".join(sentence[i+1:j+2]))):
                 j += 1
-            if sentence[j] == " ":
+            print(j,"\t","".join(sentence[j:]))
+            if sentence[j] == " " or isfloatable(sentence[j]):
                 continue
             else:
                 sentence.insert(j,' ')
@@ -89,8 +90,7 @@ def autoTranslate(sentence:str):
 
     # 下面是重点，只有我和老天爷看得懂
     if 'detect' in sentence[:sentence.find("execute",8) if "execute" in sentence[8:] else -1]:
-
-        ___ = [ j for i in [[i,] if sum([_.isalpha() for _ in i]) else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[sentence.find("detect")+6:].strip().split(" ",4)] for j in i ]
+        ___ = [ j for i in [[i,] if sum([isfloatable(_) for _ in i]) else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[sentence.find("detect")+6:].strip().split(" ",4)] for j in i ]
         
         ____ = " ".join(___[3:]).split(" ")
 
@@ -98,7 +98,7 @@ def autoTranslate(sentence:str):
         
     else:
 
-        ___ = [ j for i in [[i,] if sum([_.isalpha() for _ in i]) else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+1:].strip().split(" ",4)] for j in i ]
+        ___ = [ j for i in [[i,] if sum([isfloatable(_) for _ in i]) else ((["~"+j for j in i[1:].split("~")] if i.startswith("~") else ["~"+j for j in i.split("~")]) if "~" in i else ([i,] if not "^" in i else (["^"+j for j in i[1:].split("^")] if i.startswith("^") else ["^"+j for j in i.split("^")]))) for i in sentence[(sentence.find("]") if "]" in sentence else sentence.find("@")+1)+1:].strip().split(" ",4)] for j in i ]
 
         return backSentence('execute as {0} positioned as @s positioned {1} at @s positioned {1} run {2}'.format(sentence[sentence.find("execute")+7:(sentence.find("]") if "[" in sentence[:sentence.find("@")+5] else sentence.find("@")+1)+1].strip(), " ".join(___[0:3]),autoTranslate(" ".join(___[3:]))))
         
