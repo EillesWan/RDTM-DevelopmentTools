@@ -263,17 +263,19 @@ def toLineBDXfile(
 
         # 不是最后一组
         if funcList:
+            # 计算系统延展方向的长度
+            totalSize[antiaxis] += 2 + nowlen // limit_
+
             if totalSize[antiaxis] + 2 <= limit_:
                 # 没到头，那就 向前走两步？
                 _bytes += move(antiaxis, 2)
             else:
                 # 到头了，那就退回去？
+                _bytes += move("y", 2)
                 _bytes += move(antiaxis, -totalSize[antiaxis])
 
             # _bytes += move(axis_, -len(func))
 
-            # 计算系统延展方向的长度
-            totalSize[antiaxis] += 2 + nowlen // limit_
         else:
             totalSize[antiaxis] += 1 + nowlen // limit_
 
