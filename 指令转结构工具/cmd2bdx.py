@@ -203,7 +203,8 @@ def toLineBDXbytes(
         else:
             _bytes += move(axis, goahead(not forward ^ nowf))
     
-    _bytes += move(axis, goahead(forward ^ nowf)*nowgo)
+    # _bytes += move(axis, goahead(forward ^ nowf)*nowgo)
+    _bytes += bdx_move(axis, -1 * nowgo)
 
     return _bytes
 
