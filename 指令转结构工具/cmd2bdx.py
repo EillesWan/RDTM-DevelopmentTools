@@ -272,7 +272,7 @@ def toLineBDXfile(
                 _bytes += move(antiaxis, 2)
             else:
                 # 到头了，那就退回去？
-                _bytes += move("y", 2)
+                _bytes += move(y, 2)
                 _bytes += move(antiaxis, -totalSize[antiaxis])
 
             # _bytes += move(axis_, -len(func))
