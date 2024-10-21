@@ -50,7 +50,7 @@ y = "y"
 z = "z"
 
 
-def move(axis: str, value: int):
+def bdx_move(axis: str, value: int):
     if value == 0:
         return b""
     if abs(value) == 1:
@@ -71,7 +71,7 @@ def move(axis: str, value: int):
     return key[axis][pointer] + value.to_bytes(2 ** (pointer - 2), "big", signed=True)
 
 
-def formCMDblk(
+def form_command_block_in_BDX_bytes(
     command: str,
     particularValue: int,
     impluse: int = 0,
@@ -143,7 +143,7 @@ def formCMDblk(
     return block
 
 
-axisParticularValue = {
+FACE_VALUE = {
     x: {
         True: 5,
         False: 4,
@@ -159,11 +159,11 @@ axisParticularValue = {
 }
 
 
-def anti(axis: str):
+def switch_xz(axis: str):
     return z if axis == x else x
 
 
-def goahead(forward: bool):
+def go_forward(forward: bool):
     return 1 if forward else -1
 
 
@@ -178,11 +178,11 @@ def toLineBDXbytes(
     nowgo = 0
     for cmd, condition, note in commands:
         is_point = ((nowgo != 0) and (not nowf)) or (nowf and (nowgo != (limit - 1)))
-        _bytes += formCMDblk(
+        _bytes += form_command_block_in_BDX_bytes(
             cmd,
-            axisParticularValue[axis][not forward ^ nowf]
+            FACE_VALUE[axis][not forward ^ nowf]
             if is_point
-            else axisParticularValue[anti(axis)][True],
+            else FACE_VALUE[switch_xz(axis)][True],
             impluse=2,
             condition=condition,
             needRedstone=False,
@@ -191,17 +191,17 @@ def toLineBDXbytes(
             executeOnFirstTick=False,
             trackOutput=True,
         )
-        nowgo += goahead(nowf)
+        nowgo += go_forward(nowf)
 
         if ((nowgo >= limit) and nowf) or ((nowgo < 0) and (not nowf)):
-            nowgo -= goahead(nowf)
+            nowgo -= go_forward(nowf)
 
             nowf = not nowf
 
-            _bytes += move(anti(axis), 1)
+            _bytes += bdx_move(switch_xz(axis), 1)
 
         else:
-            _bytes += move(axis, goahead(not forward ^ nowf))
+            _bytes += bdx_move(axis, go_forward(not forward ^ nowf))
     
     # _bytes += move(axis, goahead(forward ^ nowf)*nowgo)
     _bytes += bdx_move(axis, -1 * nowgo)
@@ -244,13 +244,13 @@ def toLineBDXfile(
     _bytes = (
         b"BDX\x00"
         + author.encode("utf-8")
-        + b" & Team-Ryoun: BDX Generator\x00\x01command_block\x00"
+        + b" & Team-PAS: BDX Generator\x00\x01command_block\x00"
     )
     totalSize = {x: 0, y: 1, z: 0}
     totalLen = 0
 
     # 非链延展方向，即系统延展方向
-    antiaxis = anti(axis_)
+    antiaxis = switch_xz(axis_)
 
     while funcList:
         func = funcList.pop(0)
@@ -269,11 +269,11 @@ def toLineBDXfile(
 
             if totalSize[antiaxis] + 2 <= limit_:
                 # 没到头，那就 向前走两步？
-                _bytes += move(antiaxis, 2)
+                _bytes += bdx_move(antiaxis, 2)
             else:
                 # 到头了，那就退回去？
-                _bytes += move(y, 2)
-                _bytes += move(antiaxis, -totalSize[antiaxis])
+                _bytes += bdx_move(y, 2)
+                _bytes += bdx_move(antiaxis, -totalSize[antiaxis])
 
             # _bytes += move(axis_, -len(func))
 
