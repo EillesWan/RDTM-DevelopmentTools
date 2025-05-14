@@ -156,7 +156,7 @@ def to_structure_lines(
     funcList: list,
     axis_: str,
     forward_: bool,
-    limit: int,
+    limit: int = 100,
 ):
     """
     Parameters
